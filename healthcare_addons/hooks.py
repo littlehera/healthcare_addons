@@ -215,3 +215,5 @@ app_license = "MIT"
 # auth_hooks = [
 #	"healthcare_addons.auth.validate"
 # ]
+
+fixtures = ["Custom Field", "Client Script", "Property Setter", "Print Format", "Report"]
