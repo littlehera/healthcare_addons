@@ -1,22 +1,22 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:hmo_name",
- "creation": "2023-09-17 12:49:02.494358",
+ "autoname": "field:ref_name",
+ "creation": "2023-09-18 21:36:54.688823",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "hmo_name",
+  "ref_name",
   "contact"
  ],
  "fields": [
   {
-   "fieldname": "hmo_name",
+   "fieldname": "ref_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "HMO Name",
+   "label": "Name",
    "reqd": 1,
    "unique": 1
   },
@@ -29,10 +29,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-18 21:39:37.353288",
+ "modified": "2023-09-18 21:42:39.155911",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
- "name": "HMO",
+ "name": "External Referrer",
  "name_case": "UPPER CASE",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
