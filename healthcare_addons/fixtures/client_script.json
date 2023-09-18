@@ -1,1 +1,13 @@
-[]
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Invoice",
+  "enabled": 1,
+  "modified": "2023-09-18 11:20:05.260917",
+  "module": "Healthcare Add-ons",
+  "name": "Sales Invoice - Healthcare Add-ons",
+  "script": "frappe.ui.form.on('Sales Invoice', {\n\trefresh(frm) {\n\t\t// your code here\n\t}\n})\n\nfrappe.ui.form.on('Sales Invoice', 'ref_practitioner', function(frm){\n    if(frm.doc.ref_practitioner)\n        frappe.call({\n            \"method\": \"frappe.client.get\",\n            \"args\":{\n                doctype: \"Healthcare Practitioner\",\n                name: frm.doc.ref_practitioner\n            },\n            \"callback\":function(data){\n                var practitioner_type = data.message['custom_type'];\n                var practitioner_name = data.message['practitioner_name'];\n                if(practitioner_type == 'Doctor (MD)'){\n                    practitioner_name += ', MD';\n                }\n                frm.set_value(\"custom_practitioner_name\",practitioner_name);\n            }\n        });\n});",
+  "view": "Form"
+ }
+]
