@@ -5,3 +5,5 @@ Add-on features for Frappe/ERPNext Healthcare
 #### License
 
 MIT
+
+#### Additional Features
