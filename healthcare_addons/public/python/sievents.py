@@ -10,6 +10,3 @@ def fill_pick_list(doc, method):
     pick_list = []
     doc.packed_items = []
     make_packing_list(doc)
-
-def get_product_bundle(item):
-    return frappe.db.sql("""SELECT item_code,qty,uom from `tabProduct Bundle Item` where parent =%s""",item, as_dict = True)

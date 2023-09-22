@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "hmo_name",
+  "price_list",
   "contact"
  ],
  "fields": [
@@ -25,11 +26,18 @@
    "fieldtype": "Link",
    "label": "Contact",
    "options": "Contact"
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "label": "Price List",
+   "options": "Price List",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-18 21:39:37.353288",
+ "modified": "2023-09-22 09:58:53.569176",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "HMO",
