@@ -2126,5 +2126,21 @@
   "property_type": "Check",
   "row_name": null,
   "value": "1"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Sales Partner",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocType",
+  "field_name": null,
+  "is_system_generated": 0,
+  "modified": "2023-09-22 18:19:23.790591",
+  "module": null,
+  "name": "Sales Partner-main-quick_entry",
+  "property": "quick_entry",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "1"
  }
 ]
