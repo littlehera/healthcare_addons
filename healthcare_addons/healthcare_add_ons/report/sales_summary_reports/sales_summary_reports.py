@@ -23,10 +23,10 @@ def get_columns(totals_only, report_type):
 	if totals_only != 1:
 		columns = [
 			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
-			{"label": "Posting Date", 'width': 350, "fieldname": "posting_date"},
-			{"label": "Source", 'width': 150, "fieldname": "si_source"},
-			{"label": "Referred By", 'width': 150, "fieldname": "ref_practitioner"},
-			{"label": "Gross Total", 'width': 150, "fieldname": "gross_total", "fieldtype":"Currency", "precision":2},
+			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
+			{"label": "Source", 'width': 150, "fieldname": "custom_source"},
+			{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
+			{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 			{"label": "Discount %", 'width': 150, "fieldname": "disc_perc", "fieldtype":"Float", "precision":2},
 			{"label": "Discount Amount", 'width': 150, "fieldname": "disc_amount", "fieldtype":"Currency", "precision":2},
 			{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
@@ -35,8 +35,8 @@ def get_columns(totals_only, report_type):
 	else:
 		if report_type == "With subtotals based on Source":
 			columns = [
-				{"label": "Source", 'width': 150, "fieldname": "si_source"},
-				{"label": "Gross Total", 'width': 150, "fieldname": "gross_total", "fieldtype":"Currency", "precision":2},
+				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
+				{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 				{"label": "Discount Amount", 'width': 150, "fieldname": "disc_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
 			]
@@ -48,7 +48,7 @@ def get_columns(totals_only, report_type):
 		else:
 			columns = [
 				{"label": "Referred By", 'width': 150, "fieldname": "referred_by"},
-				{"label": "Gross Total", 'width': 150, "fieldname": "gross_total", "fieldtype":"Currency", "precision":2},
+				{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 				{"label": "Discount Amount", 'width': 150, "fieldname": "disc_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
 			]
@@ -64,10 +64,24 @@ def get_data(from_date, to_date, totals_only, report_type):
 	
 	data = []
 
-	rows = frappe.db.sql("""SELECT si.*, payments.payment_mode, payments.amount from `tabSales Invoice` si left join `tabInvoice Payment Table` payments on si.name=payments.parent
-					  where si.posting_date >=%s and si.posting_date<=%s and si.docstatus = 1""",(from_date,to_date), as_dict = True)
+	rows = frappe.db.sql("""SELECT si.* from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
+					  si.docstatus = 1""",(from_date,to_date), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
+		row['payment_modes'] = get_payment_modes(row['name'])
 		data.append(row)
 	
 	return data
+
+def get_payment_modes(sales_invoice):
+	payment_methods = ""
+	rows = frappe.db.sql("""SELECT payment_mode from `tabInvoice Payment Table` where parent = %s""",sales_invoice)
+	for i, row in enumerate(rows):
+		payment_methods+=str(row[0])
+		if len(rows)!= i+1:
+			payment_methods+=', '
+	
+	print(payment_methods)
+	print("#####################")
+	
+	return payment_methods
