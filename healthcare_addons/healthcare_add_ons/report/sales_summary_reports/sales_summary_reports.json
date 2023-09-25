@@ -10,7 +10,7 @@
  "idx": 1,
  "is_standard": "Yes",
  "json": "{}",
- "modified": "2023-09-25 15:15:03.449156",
+ "modified": "2023-09-25 18:28:09.786138",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Sales Summary Reports",
@@ -22,6 +22,9 @@
  "roles": [
   {
    "role": "Healthcare Administrator"
+  },
+  {
+   "role": "Sales Manager"
   }
  ]
 }
