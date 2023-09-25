@@ -11,6 +11,9 @@ def execute(filters=None):
 	to_date = filters.get("to_date")
 	totals_only = filters.get("totals_only")
 	report_type = filters.get("report_type")
+	ref_practitioner = filters.get("referred_by")
+	custom_source = filters.get("custom_source")
+	payment_mode = filters.get("payment_mode")
 
 	#frappe.msgprint("TOTALS ONLY="+str(totals_only))
 
@@ -28,7 +31,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
 				{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
-				{"label": "Discount %", 'width': 150, "fieldname": "additional_discount_percentage", "fieldtype":"Float", "precision":2},
+				{"label": "Discount %", 'width': 150, "fieldname": "additional_discount_percentage"},
 				{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
 				{"label": "Form of Payment", 'width': 150, "fieldname": "payment_modes"}
@@ -73,19 +76,26 @@ def get_columns(totals_only, report_type):
 def get_data(from_date, to_date, totals_only, report_type):
 	#REPORT TYPES: "With subtotals based on Source", "with Subtotal for each Form of Payment","Summary based on Referred By"
 	data = []
-
+	key_value = ""
 	if totals_only != 1:
 		if report_type in ["With subtotals based on Source","Summary based on Referred By"]:
 			data = get_all_si(from_date, to_date)
 			if report_type == "With subtotals based on Source":
-				data = sorted(data, key=lambda k: k['custom_source'], reverse=False)
+				key_value = 'custom_source'
 			else:
-				data = sorted(data, key=lambda k: k['custom_practitioner_name'], reverse=False)
+				key_value = 'custom_practitioner_name'
+
 		else:
+			key_value = 'payment_mode'
 			data = get_all_payments(from_date, to_date)
-	
+
+		data = sorted(data, key=lambda k: k[key_value], reverse=False)
+		data = insert_subtotals(data, key_value)
 	else:
+		key_value = 'payment_mode' if report_type not in ["With subtotals based on Source","Summary based on Referred By"] else ''
 		data = get_totals_only(from_date, to_date, report_type)
+	
+	data = insert_total_row(data, key_value, totals_only)
 	
 	return data
 
@@ -146,4 +156,56 @@ def get_totals_only(from_date, to_date, report_type):
 					   			group by pmt.payment_mode""",
 						(from_date, to_date), as_dict = True)
 
+	return data
+
+def insert_subtotals(data, key_name):
+	new_data = []
+
+	discount_total = 0
+	gross_total = 0
+	net_total = 0
+	total_amount = 0
+
+	prev_key_value = None
+	for row in data:
+		if (prev_key_value!= row[key_name]) or (prev_key_value is None):
+			if (prev_key_value is not None):
+				new_data.append({key_name:"Total for "+str(prev_key_value), "discount_amount":discount_total, "amount":total_amount, "total":gross_total, "net_total":net_total})
+				discount_total = 0
+				gross_total = 0
+				net_total = 0
+				total_amount = 0
+			prev_key_value = row[key_name]
+		
+		new_data.append(row)
+
+		discount_total += float(row['discount_amount'])
+		gross_total += float(row['total'])
+		net_total += float(row['net_total'])
+
+		if key_name == 'payment_mode':
+			total_amount += float(row['amount'])
+	
+	new_data.append({key_name:"Total for "+str(prev_key_value), "additional_discount_percentage":None, "discount_amount":discount_total, "total":gross_total, 
+					"net_total":net_total, "amount":total_amount})
+	return new_data
+
+
+def insert_total_row(data, key_value, totals_only):
+	discount_total = 0
+	gross_total = 0
+	net_total = 0
+	amount = 0 
+	for row in data:
+		if (totals_only !=1) and 'Total for' in row[key_value]:
+			continue
+		else:
+			if key_value == 'payment_mode':
+				amount += float(row['amount'])
+			else:
+				gross_total += float(row['total'])
+				net_total += float(row['net_total'])
+				discount_total += float(row['discount_amount'])
+
+	data.append({"sales_invoice":"TOTAL", "additional_discount_percentage":None, "discount_amount":discount_total, "amount":amount, "total":gross_total, "net_total":net_total})
 	return data

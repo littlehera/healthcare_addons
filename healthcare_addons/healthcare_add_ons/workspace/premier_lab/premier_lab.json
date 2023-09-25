@@ -1,0 +1,53 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"Documents\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":6}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"Reports\",\"col\":12}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}}]",
+ "creation": "2023-09-25 14:13:30.640513",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-review-points",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Premier Lab",
+ "links": [],
+ "modified": "2023-09-25 14:31:29.699566",
+ "modified_by": "Administrator",
+ "module": "Healthcare Add-ons",
+ "name": "Premier Lab",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Healthcare Administrator"
+  },
+  {
+   "role": "Receptionist"
+  },
+  {
+   "role": "Administrator"
+  }
+ ],
+ "sequence_id": 1.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Sales Invoices",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Sales Summary Reports",
+   "link_to": "Sales Summary Reports",
+   "type": "Report"
+  }
+ ],
+ "title": "Premier Lab"
+}
