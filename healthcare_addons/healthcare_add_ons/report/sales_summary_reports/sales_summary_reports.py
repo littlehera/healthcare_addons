@@ -18,7 +18,7 @@ def execute(filters=None):
 	#frappe.msgprint("TOTALS ONLY="+str(totals_only))
 
 	columns = get_columns(totals_only, report_type)
-	data = get_data(from_date, to_date, totals_only, report_type)
+	data = get_data(from_date, to_date, totals_only, report_type, filters)
 	return columns, data
 
 def get_columns(totals_only, report_type):
@@ -73,13 +73,13 @@ def get_columns(totals_only, report_type):
 
 	return columns
 
-def get_data(from_date, to_date, totals_only, report_type):
+def get_data(from_date, to_date, totals_only, report_type, filters):
 	#REPORT TYPES: "With subtotals based on Source", "with Subtotal for each Form of Payment","Summary based on Referred By"
 	data = []
 	key_value = ""
 	if totals_only != 1:
 		if report_type in ["With subtotals based on Source","Summary based on Referred By"]:
-			data = get_all_si(from_date, to_date)
+			data = get_all_si(from_date, to_date, filters)
 			if report_type == "With subtotals based on Source":
 				key_value = 'custom_source'
 			else:
@@ -87,23 +87,28 @@ def get_data(from_date, to_date, totals_only, report_type):
 
 		else:
 			key_value = 'payment_mode'
-			data = get_all_payments(from_date, to_date)
+			data = get_all_payments(from_date, to_date, filters)
 
 		data = sorted(data, key=lambda k: k[key_value], reverse=False)
 		data = insert_subtotals(data, key_value)
 	else:
 		key_value = 'payment_mode' if report_type not in ["With subtotals based on Source","Summary based on Referred By"] else ''
-		data = get_totals_only(from_date, to_date, report_type)
+		data = get_totals_only(from_date, to_date, report_type, filters)
 	
 	data = insert_total_row(data, key_value, totals_only)
 	
 	return data
 
-def get_all_si(from_date, to_date):
+def get_all_si(from_date, to_date, filters):
+	ref_practitioner = filters.get("referred_by") if filters.get("referred_by") is not None else ''
+	custom_source = filters.get("custom_source") if filters.get("custom_source") is not None else ''
+	payment_mode = filters.get("payment_mode") if filters.get("payment_mode") is not None else ''
 	data = []
 
-	rows = frappe.db.sql("""SELECT si.* from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
-					  si.docstatus = 1""",(from_date,to_date), as_dict = True)
+	rows = frappe.db.sql("""SELECT DISTINCT si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt on pmt.parent = si.name 
+					  where si.posting_date >=%s and si.posting_date<=%s and si.docstatus = 1 and si.ref_practitioner like %s
+					  and si.custom_source like %s and pmt.payment_mode like %s""",
+					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
 		row['payment_modes'] = get_payment_modes(row['name'])
@@ -111,11 +116,15 @@ def get_all_si(from_date, to_date):
 
 	return data
 
-def get_all_payments(from_date, to_date):
+def get_all_payments(from_date, to_date, filters):
+	ref_practitioner = filters.get("referred_by") if filters.get("referred_by") is not None else ''
+	custom_source = filters.get("custom_source") if filters.get("custom_source") is not None else ''
+	payment_mode = filters.get("payment_mode") if filters.get("payment_mode") is not None else ''
 	data = []
 	rows = frappe.db.sql("""SELECT pmt.payment_mode, pmt.amount, si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt 
 					  on pmt.parent = si.name where si.posting_date >=%s and si.posting_date<=%s and 
-					  si.docstatus = 1""",(from_date,to_date), as_dict = True)
+					  si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s""",
+					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
 		data.append(row)
@@ -135,26 +144,35 @@ def get_payment_modes(sales_invoice):
 	
 	return payment_methods
 
-def get_totals_only(from_date, to_date, report_type):
+def get_totals_only(from_date, to_date, report_type, filters):
+	ref_practitioner = filters.get("referred_by") if filters.get("referred_by") is not None else ''
+	custom_source = filters.get("custom_source") if filters.get("custom_source") is not None else ''
+	payment_mode = filters.get("payment_mode") if filters.get("payment_mode") is not None else ''
+
 	data = []
 	
 	#REPORT TYPES: "With subtotals based on Source", "with Subtotal for each Form of Payment","Summary based on Referred By"
 	if report_type == "With subtotals based on Source":
-		data = frappe.db.sql("""SELECT custom_source, sum(total) as total, sum(discount_amount) as discount_amount, sum(net_total) 
-			   					as net_total from `tabSales Invoice` where posting_date >=%s and posting_date <=%s and docstatus = 1
-					   			group by custom_source""",
-								(from_date, to_date), as_dict = True)
+		data = frappe.db.sql("""SELECT si.custom_source, sum(si.total) as total, sum(si.discount_amount) as discount_amount, sum(si.net_total) 
+			   					as net_total from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
+					  			si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and name in (SELECT parent from 
+					   			`tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
+					   			group by si.custom_source""",
+					  			(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	elif report_type == "Summary based on Referred By":
-		data = frappe.db.sql("""SELECT custom_practitioner_name, sum(total) as total, sum(discount_amount) as discount_amount, sum(net_total) 
-								as net_total from `tabSales Invoice` where posting_date >=%s and posting_date <=%s and docstatus = 1
-					   			group by custom_practitioner_name""",
-						(from_date, to_date), as_dict = True)
+		data = frappe.db.sql("""SELECT si.custom_practitioner_name, sum(si.total) as total, sum(si.discount_amount) as discount_amount, sum(si.net_total) 
+								as net_total from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
+					  			si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and name in 
+					   			(SELECT parent from `tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
+					   			group by si.custom_practitioner_name""",
+								(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 
 	else:
 		data = frappe.db.sql("""SELECT pmt.payment_mode as payment_mode, sum(pmt.amount) as amount from `tabInvoice Payment Table` pmt join `tabSales Invoice` si 
-					   			on si.name = pmt.parent	where si.posting_date >=%s and si.posting_date <=%s and si.docstatus = 1
+					   			on si.name = pmt.parent	where si.posting_date >=%s and si.posting_date <=%s and si.docstatus = 1 and 
+					   			si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s
 					   			group by pmt.payment_mode""",
-						(from_date, to_date), as_dict = True)
+								(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 
 	return data
 
