@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2023-09-24 15:39:55.359414",
  "disable_prepared_report": 0,
@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "json": "{}",
- "modified": "2023-09-24 15:41:48.432109",
+ "modified": "2023-09-25 10:27:14.715290",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Sales Summary Reports",
