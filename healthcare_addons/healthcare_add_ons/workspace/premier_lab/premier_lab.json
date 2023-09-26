@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"Documents\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":6}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"Reports\",\"col\":12}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":3}}]",
+ "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"Documents\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":6}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"Reports\",\"col\":12}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":3}},{\"id\":\"m3wE1VFAwH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Incentives\",\"col\":3}}]",
  "creation": "2023-09-25 14:13:30.640513",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Premier Lab",
  "links": [],
- "modified": "2023-09-25 18:32:41.123053",
+ "modified": "2023-09-26 11:04:32.060195",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Premier Lab",
@@ -40,6 +40,13 @@
    "label": "Sales Invoices",
    "link_to": "Sales Invoice",
    "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Summary of Incentives",
+   "link_to": "Summary of Incentives",
+   "type": "Report"
   },
   {
    "color": "Grey",
