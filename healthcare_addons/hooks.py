@@ -125,7 +125,8 @@ doc_events = {
 	# 	"on_trash": "method"
 	# }
     "Sales Invoice": {
-		"validate": "healthcare_addons.public.python.sievents.validate_si"
+		"validate": "healthcare_addons.public.python.sievents.validate_si",
+        "on_submit": "healthcare_addons.public.python.sievents.submit_si"
 	},
     "Healthcare Practitioner":{
         "validate": "healthcare_addons.public.python.hpevents.create_sales_partner"

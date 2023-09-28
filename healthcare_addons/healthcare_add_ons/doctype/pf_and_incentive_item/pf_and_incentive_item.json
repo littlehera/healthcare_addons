@@ -39,8 +39,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Doctor",
-   "options": "Healthcare Practitioner",
-   "reqd": 1
+   "options": "Healthcare Practitioner"
   },
   {
    "fieldname": "amount_to_turnover",
@@ -53,7 +52,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-28 14:13:55.420911",
+ "modified": "2023-09-28 15:23:24.955270",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PF and Incentive Item",
