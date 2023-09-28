@@ -35,6 +35,7 @@ def validate_payments(doc):
         frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE NET TOTAL AMOUNT!")
 
 def pull_item_pf_incentives(doc):
+    total_pfs = 0
 
     ### FOR SI ITEMS
     for item in doc.items:
@@ -49,12 +50,14 @@ def pull_item_pf_incentives(doc):
             amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_md_pf")
             pf_type = "MD Consultation PF"
             amount_to_turnover = amount
+            doc.amount_eligible_for_commission = doc.grand_total
             doc.amount_eligible_for_commission -= amount
             doc.total_commission = doc.amount_eligible_for_commission * (doc.commission_rate/100)
         else:
             item_group = frappe.db.get_value("Item", item.item_code, "item_group")
             if item_group == "Laboratory":
                 amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
                 amount_to_turnover = amount
             else:
@@ -62,6 +65,7 @@ def pull_item_pf_incentives(doc):
                 amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount
                 amount_to_turnover = amount * 0.88
         if amount > 0:
+            total_pfs += amount
             doctor = item.custom_doctor
             pf_row = {
                 "item_code":item.item_code,
@@ -81,6 +85,7 @@ def pull_item_pf_incentives(doc):
             pf_type = "Reading PF"
             amount_to_turnover = amount
             if amount > 0:
+                total_pfs += amount
                 pf_row = {
                     "item_code":item.item_code,
                     "amount": amount,
@@ -90,6 +95,29 @@ def pull_item_pf_incentives(doc):
                 if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
                     pf_row = doc.append("custom_pf_and_incentives",pf_row)
                     frappe.msgprint("Please enter doctor for PF/Incentive row"+str(pf_row.idx)+" | "+pf_row.item_code)
+    
+       ### For Sales Partner/Health Practitioner Incentives
+    if doc.custom_source in ["Doctor's Referral- Regular","Doctor's Referral- SC/PWD", "Promo"]:
+        amount = doc.total_commission
+        pf_type = "Incentive"
+        item_code = "INCENTIVE"
+        doctor = doc.ref_practitioner
+        amount_to_turnover = amount
+
+        if amount > 0:
+            total_pfs += amount
+            pf_row = {
+                "item_code":item_code,
+                "amount": amount,
+                "doctor": doctor,
+                "pf_type": pf_type,
+                "amount_to_turnover":amount_to_turnover
+                }
+            
+            if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
+                pf_row = doc.append("custom_pf_and_incentives",pf_row)
+
+    doc.custom_net_sales = doc.grand_total - total_pfs
 
 def is_package(item_code):
     is_pckg = False
