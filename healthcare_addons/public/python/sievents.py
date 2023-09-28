@@ -45,3 +45,11 @@ def is_package(item_code):
     if count_package[0][0]>0:
         is_pckg = True
     return is_pckg
+
+
+def is_promo(item_code):
+    is_promo = False
+    count_promo = frappe.db.sql("""SELECT COUNT(*) from `tabProduct Bundle` where custom_type = 'Promo' and new_item_code = %s""",item_code)
+    if count_promo[0][0]>0:
+        is_promo = True
+    return is_promo

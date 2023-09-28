@@ -1,17 +1,16 @@
 {
  "actions": [],
  "autoname": "hash",
- "creation": "2023-09-27 09:07:03.360663",
+ "creation": "2023-09-28 14:11:48.748943",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "item_code",
-  "fee_type",
   "amount",
+  "pf_type",
   "doctor",
-  "tax_percent",
-  "net_pf"
+  "amount_to_turnover"
  ],
  "fields": [
   {
@@ -23,6 +22,19 @@
    "reqd": 1
   },
   {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "pf_type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Reading PF\nPromo Consultation PF\nMD Consultation PF\nIncentive"
+  },
+  {
    "fieldname": "doctor",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -31,41 +43,20 @@
    "reqd": 1
   },
   {
-   "default": "0",
-   "fieldname": "tax_percent",
-   "fieldtype": "Float",
-   "label": "Tax"
-  },
-  {
-   "fieldname": "net_pf",
-   "fieldtype": "Currency",
-   "label": "Net PF"
-  },
-  {
-   "fieldname": "fee_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Type",
-   "options": "RPF\nCPF\nINCENTIVE",
-   "reqd": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "amount",
+   "fieldname": "amount_to_turnover",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Amount",
-   "precision": "2",
+   "label": "Amount to turnover",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-28 09:05:11.309095",
+ "modified": "2023-09-28 14:13:55.420911",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
- "name": "Professional Fee Item",
+ "name": "PF and Incentive Item",
  "naming_rule": "Random",
  "owner": "Administrator",
  "permissions": [],
