@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"3e0tgkLJtl\",\"type\":\"paragraph\",\"data\":{\"text\":\"Masters\",\"col\":12}},{\"id\":\"o2ANxAJP6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"Documents\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":6}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"Reports\",\"col\":12}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":3}},{\"id\":\"m3wE1VFAwH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Incentives\",\"col\":3}}]",
+ "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"3e0tgkLJtl\",\"type\":\"paragraph\",\"data\":{\"text\":\"Masters\",\"col\":12}},{\"id\":\"o2ANxAJP6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"Documents\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":6}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"Reports\",\"col\":12}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":4}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"0wrFrLvRED\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of HMO Transactions\",\"col\":4}},{\"id\":\"m3wE1VFAwH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Incentives\",\"col\":4}},{\"id\":\"S_0sbTlIbo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Professional Fees\",\"col\":4}}]",
  "creation": "2023-09-25 14:13:30.640513",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Premier Lab",
  "links": [],
- "modified": "2023-09-29 14:05:14.617661",
+ "modified": "2023-09-29 14:14:41.325429",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Premier Lab",
@@ -51,6 +51,13 @@
   {
    "color": "Grey",
    "doc_view": "List",
+   "label": "Summary of HMO Transactions",
+   "link_to": "Summary of HMO",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
    "label": "Summary of Incentives",
    "link_to": "Summary of Incentives",
    "type": "Report"
@@ -60,6 +67,13 @@
    "doc_view": "List",
    "label": "Daily Sales Report",
    "link_to": "Daily Sales Report",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Summary of Professional Fees",
+   "link_to": "Summary of Professional Fees",
    "type": "Report"
   },
   {
