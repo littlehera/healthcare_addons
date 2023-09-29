@@ -39,7 +39,7 @@
    "fieldname": "doctor",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Doctor",
+   "label": "Healthcare Professional",
    "options": "Healthcare Practitioner"
   },
   {
@@ -54,7 +54,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-09-28 18:02:24.038607",
+ "modified": "2023-09-29 10:02:45.145605",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PF and Incentive Item",

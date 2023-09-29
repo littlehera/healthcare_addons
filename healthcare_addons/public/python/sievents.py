@@ -39,6 +39,7 @@ def pull_item_pf_incentives(doc):
 
     ### FOR SI ITEMS
     for item in doc.items:
+        doctor = ""
         pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
         amount = 0
         amount_to_turnover = 0
@@ -46,6 +47,7 @@ def pull_item_pf_incentives(doc):
             amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_incentive_amount")
             pf_type ="Incentive"
             amount_to_turnover = amount
+            doctor = doc.ref_practitioner
         elif is_promo(item.item_code):
             amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_md_pf")
             pf_type = "MD Consultation PF"
@@ -56,17 +58,18 @@ def pull_item_pf_incentives(doc):
         else:
             item_group = frappe.db.get_value("Item", item.item_code, "item_group")
             if item_group == "Laboratory":
+                doctor = item.custom_doctor
                 amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
                 amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
                 amount_to_turnover = amount
             else:
+                doctor = item.custom_doctor
                 pf_type = "MD Consultation PF"
                 amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount
                 amount_to_turnover = amount * 0.88
         if amount > 0:
             total_pfs += amount
-            doctor = item.custom_doctor
             pf_row = {
                 "item_code":item.item_code,
                 "amount": amount,
