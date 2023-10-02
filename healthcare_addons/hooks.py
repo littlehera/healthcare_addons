@@ -130,6 +130,9 @@ doc_events = {
 	},
     "Healthcare Practitioner":{
         "validate": "healthcare_addons.public.python.hpevents.create_sales_partner"
+	},
+    "Patient":{
+        "validate": "healthcare_addons.public.python.patevents.on_save"
 	}
 }
 

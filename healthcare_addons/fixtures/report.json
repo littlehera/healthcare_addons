@@ -8028,7 +8028,7 @@
   "javascript": null,
   "json": "{}",
   "letter_head": null,
-  "modified": "2023-09-25 18:28:09.786138",
+  "modified": "2023-09-29 20:07:53.587235",
   "module": "Healthcare Add-ons",
   "name": "Sales Summary Reports",
   "prepared_report": 0,
@@ -8143,6 +8143,43 @@
     "parentfield": "roles",
     "parenttype": "Report",
     "role": "Accounts Manager"
+   }
+  ]
+ },
+ {
+  "add_total_row": 1,
+  "columns": [],
+  "disable_prepared_report": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": null,
+  "modified": "2023-09-29 21:00:59.406200",
+  "module": "Healthcare Add-ons",
+  "name": "Summary of Labs per Employee",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Sales Invoice",
+  "reference_report": null,
+  "report_name": "Summary of Labs per Employee",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Summary of Labs per Employee",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Summary of Labs per Employee",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Sales Manager"
    }
   ]
  }
