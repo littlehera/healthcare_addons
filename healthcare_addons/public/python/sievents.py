@@ -13,6 +13,11 @@ def validate_si(doc, method):
 
 def submit_si(doc,method):
     check_doctor_not_blank(doc)
+    create_pe(doc)
+
+def cancel_si(doc,method):
+    frappe.throw("Cancel SI")
+    #TODO: get all PE's linked to this transaction and cancel PEs.
 
 def check_employee_benefit(doc):
     has_employee_benefit = 0
@@ -156,3 +161,45 @@ def check_doctor_not_blank(doc):
     for row in doc.custom_pf_and_incentives:
         if row.doctor is None or row.doctor == "":
             frappe.throw("Enter a valid doctor for PF/INCENTIVE "+row.item_code+"| row # "+str(row.idx))
+        
+def create_pe(doc):
+    reference_date = doc.posting_date
+    payment_type = "Receive"
+    party_type = "Customer"
+    party = doc.customer
+    party_name = doc.customer_name
+    paid_to = "1110 - Cash - PL"
+    doctype = "Payment Entry"
+
+    for row in doc.custom_invoice_payments:
+        paid_amount = row.amount
+        reference_no = row.ref_no
+        mode_of_payment = row.payment_mode
+
+        pe_dict = {
+            "doctype":doctype,
+            "reference_date":reference_date,
+            "posting_date":reference_date,
+            "payment_type":payment_type,
+            "party_type":party_type,
+            "party":party,
+            "party_name":party_name,
+            "paid_to":paid_to,
+            "paid_amount":paid_amount,
+            "received_amount":paid_amount,
+            "reference_no": reference_no,
+            "mode_of_payment":mode_of_payment
+        }
+
+        pe_doc = frappe.get_doc(pe_dict)
+
+        pe_ref = {
+            "reference_doctype":"Sales Invoice",
+            "reference_name": doc.name,
+            "allocated_amount": paid_amount
+                }
+        
+        pe_doc.append("references",pe_ref)
+
+        pe_doc.insert()
+        pe_doc.submit()

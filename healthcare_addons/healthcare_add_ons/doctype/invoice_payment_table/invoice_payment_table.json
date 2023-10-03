@@ -29,6 +29,7 @@
   {
    "fieldname": "ref_no",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Reference No",
    "reqd": 1
   }
@@ -36,7 +37,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-02 10:06:25.884962",
+ "modified": "2023-10-03 10:57:05.894045",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Invoice Payment Table",
