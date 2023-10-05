@@ -15,6 +15,13 @@ frappe.query_reports["Summary of Laboratory Tests Conducted"] = {
             "label": __("To Date"),
             "fieldtype": "Date",
             "reqd": 1
+        },
+        {
+            "fieldname": "report_type",
+            "label": __("Type"),
+            "fieldtype": "Select",
+            "options": ['Total Only', 'Total per Source'], 
+            "reqd": 1
         }
 	]
 };
