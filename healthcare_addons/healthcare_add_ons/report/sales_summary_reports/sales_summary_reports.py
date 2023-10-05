@@ -34,7 +34,8 @@ def get_columns(totals_only, report_type):
 				{"label": "Discount %", 'width': 150, "fieldname": "additional_discount_percentage"},
 				{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
-				{"label": "Form of Payment", 'width': 150, "fieldname": "payment_modes"}
+				{"label": "Form of Payment", 'width': 150, "fieldname": "payment_modes"},
+				{"label": "Ref#/OR#", 'width': 150, "fieldname": "ref_no"}
 			]
 		else:
 			columns = [
@@ -43,7 +44,8 @@ def get_columns(totals_only, report_type):
 				{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
-				{"label": "Payment Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
+				{"label": "Payment Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2},
+				{"label": "Ref#/OR#", 'width': 150, "fieldname": "ref_no"}
 				# {"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 				# {"label": "Discount %", 'width': 150, "fieldname": "disc_perc", "fieldtype":"Float", "precision":2},
 				# {"label": "Discount Amount", 'width': 150, "fieldname": "disc_amount", "fieldtype":"Currency", "precision":2},
@@ -112,6 +114,7 @@ def get_all_si(from_date, to_date, filters):
 	for row in rows:
 		row['sales_invoice'] = row['name']
 		row['payment_modes'] = get_payment_modes(row['name'])
+		row['ref_no'] = get_ref_nos(row['name'])
 		data.append(row)
 
 	return data
@@ -121,7 +124,7 @@ def get_all_payments(from_date, to_date, filters):
 	custom_source = filters.get("custom_source") if filters.get("custom_source") is not None else ''
 	payment_mode = filters.get("payment_mode") if filters.get("payment_mode") is not None else ''
 	data = []
-	rows = frappe.db.sql("""SELECT pmt.payment_mode, pmt.amount, si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt 
+	rows = frappe.db.sql("""SELECT pmt.payment_mode, pmt.amount, pmt.ref_no, si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt 
 					  on pmt.parent = si.name where si.posting_date >=%s and si.posting_date<=%s and 
 					  si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s""",
 					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
@@ -143,6 +146,16 @@ def get_payment_modes(sales_invoice):
 	print("#####################")
 	
 	return payment_methods
+
+def get_ref_nos(sales_invoice):
+	ref_nos = ""
+	rows = frappe.db.sql("""SELECT ref_no from `tabInvoice Payment Table` where parent = %s""",sales_invoice)
+	for i, row in enumerate(rows):
+		ref_nos+=str(row[0])
+		if len(rows)!= i+1:
+			ref_nos+=', '
+	
+	return ref_nos
 
 def get_totals_only(from_date, to_date, report_type, filters):
 	ref_practitioner = filters.get("referred_by") if filters.get("referred_by") is not None else ''
