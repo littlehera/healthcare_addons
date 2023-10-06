@@ -14,10 +14,15 @@ def validate_si(doc, method):
 def submit_si(doc,method):
     check_doctor_not_blank(doc)
     create_pe(doc)
+    doc.reload()
 
 def cancel_si(doc,method):
-    frappe.throw("Cancel SI")
-    #TODO: get all PE's linked to this transaction and cancel PEs.
+    pes = frappe.db.sql("""SELECT parent from `tabPayment Entry Reference` where reference_name=%s""",doc.name)
+    #get all PE's linked to this transaction and cancel PEs.
+    for pe in pes:
+        frappe.db.sql("""UPDATE `tabPayment Entry` set docstatus = 2, status = 'Cancelled' where name = %s""", pe[0])
+        frappe.db.commit()
+
 
 def check_employee_benefit(doc):
     has_employee_benefit = 0

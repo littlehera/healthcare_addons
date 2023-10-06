@@ -127,7 +127,7 @@ doc_events = {
     "Sales Invoice": {
 		"validate": "healthcare_addons.public.python.sievents.validate_si",
         "on_submit": "healthcare_addons.public.python.sievents.submit_si",
-        "on_cancel": "healthcare_addons.public.python.sievents.cancel_si"
+        "before_cancel": "healthcare_addons.public.python.sievents.cancel_si"
 	},
     "Healthcare Practitioner":{
         "validate": "healthcare_addons.public.python.hpevents.create_sales_partner"

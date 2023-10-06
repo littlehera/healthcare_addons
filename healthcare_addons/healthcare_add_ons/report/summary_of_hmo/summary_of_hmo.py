@@ -12,7 +12,7 @@ def execute(filters=None):
 	report_type = filters.get("report_type")
 
 	columns = [
-		#{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
+		{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 		{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 		{"label": "HMO", 'width': 150, "fieldname": "hmo"},
 		{"label": "Patient Name", 'width': 150, "fieldname": "patient_name"},
