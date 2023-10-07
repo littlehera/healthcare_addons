@@ -26,7 +26,8 @@ def execute(filters=None):
 	for row in rows:
 		row['items'], row['amount'] = get_items(row['sales_invoice'], report_type)
 		row['ref_no'] = get_ref_no(row['sales_invoice'])
-		data.append(row)
+		if row['items'] != "":
+			data.append(row)
 	
 	data = insert_subtotals(data, 'hmo')
 	data = insert_total_row(data, 'hmo')
