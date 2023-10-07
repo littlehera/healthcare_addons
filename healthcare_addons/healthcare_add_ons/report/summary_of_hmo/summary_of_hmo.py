@@ -65,7 +65,11 @@ def get_items(si, report_type):
 
 def get_ref_no(si):
 	rows = frappe.db.sql("""SELECT ref_no from `tabInvoice Payment Table` where parent = %s and payment_mode = 'Charge to HMO'""",si)
-	return rows[0][0]
+
+	if len(rows)>0:
+		return rows[0][0]
+	else:
+		return ""
 
 def insert_subtotals(data, key_name):
 	new_data = []
