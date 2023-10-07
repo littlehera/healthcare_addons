@@ -22,6 +22,12 @@ def cancel_si(doc,method):
     for pe in pes:
         frappe.db.sql("""UPDATE `tabPayment Entry` set docstatus = 2, status = 'Cancelled' where name = %s""", pe[0])
         frappe.db.commit()
+    
+    incentives = frappe.db.sql("""SELECT name from `tabPF and Incentive Item` where parent = %s""",doc.name)
+    for incentive in incentives:
+        frappe.db.sql("""DELETE from `tabPF and Incentive Item` where name = %s""", incentive[0])
+        frappe.db.commit()
+
 
 
 def check_employee_benefit(doc):
@@ -49,7 +55,7 @@ def pull_item_pf_incentives(doc):
 
     ### FOR SI ITEMS
     for item in doc.items:
-        doctor = ""
+        doctor = None
         pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
         amount = 0
         amount_to_turnover = 0
@@ -57,7 +63,6 @@ def pull_item_pf_incentives(doc):
             amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_incentive_amount")
             pf_type ="Incentive"
             amount_to_turnover = amount
-            doctor = doc.ref_practitioner
         elif is_promo(item.item_code):
             amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_md_pf")
             pf_type = "MD Consultation PF"
@@ -164,7 +169,7 @@ def check_in_pf_items(row, items, doctor = None):
 
 def check_doctor_not_blank(doc):
     for row in doc.custom_pf_and_incentives:
-        if row.doctor is None or row.doctor == "":
+        if (row.doctor is None or row.doctor == "") and (row.external_referrer is None or row.external_referrer == ""):
             frappe.throw("Enter a valid doctor for PF/INCENTIVE "+row.item_code+"| row # "+str(row.idx))
         
 def create_pe(doc):

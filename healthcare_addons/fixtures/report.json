@@ -8054,7 +8054,7 @@
   ]
  },
  {
-  "add_total_row": 1,
+  "add_total_row": 0,
   "columns": [],
   "disable_prepared_report": 0,
   "disabled": 0,
@@ -8065,7 +8065,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2023-09-29 11:05:22.547732",
+  "modified": "2023-10-06 22:25:55.818707",
   "module": "Healthcare Add-ons",
   "name": "Summary of Professional Fees",
   "prepared_report": 0,
@@ -8096,7 +8096,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2023-09-29 13:35:26.298503",
+  "modified": "2023-10-06 22:32:40.565351",
   "module": "Healthcare Add-ons",
   "name": "Summary of HMO",
   "prepared_report": 0,
@@ -8112,6 +8112,12 @@
     "parentfield": "roles",
     "parenttype": "Report",
     "role": "Accounts Manager"
+   },
+   {
+    "parent": "Summary of HMO",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Receptionist"
    }
   ]
  },
@@ -8147,7 +8153,7 @@
   ]
  },
  {
-  "add_total_row": 1,
+  "add_total_row": 0,
   "columns": [],
   "disable_prepared_report": 0,
   "disabled": 0,
@@ -8158,7 +8164,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2023-09-29 21:00:59.406200",
+  "modified": "2023-10-06 22:18:28.457457",
   "module": "Healthcare Add-ons",
   "name": "Summary of Labs per Employee",
   "prepared_report": 0,
