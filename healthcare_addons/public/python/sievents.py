@@ -85,17 +85,25 @@ def pull_item_pf_incentives(doc):
                 amount_to_turnover = amount * 0.88
         if amount > 0:
             total_pfs += amount
-            pf_row = {
-                "item_code":item.item_code,
-                "amount": amount,
-                "doctor": doctor,
-                "pf_type": pf_type,
-                "amount_to_turnover":amount_to_turnover
-                }
-            
-            if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
-                pf_row = doc.append("custom_pf_and_incentives",pf_row)
-
+            if doctor is not None:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "doctor": doctor,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+            else:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
     ##FOR BUNDLE ITEMS
     if doc.packed_items:
         for item in doc.packed_items:
