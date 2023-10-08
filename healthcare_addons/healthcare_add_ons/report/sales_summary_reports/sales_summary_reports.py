@@ -238,5 +238,5 @@ def insert_total_row(data, key_value, totals_only):
 				net_total += float(row['net_total'])
 				discount_total += float(row['discount_amount'])
 
-	data.append({"sales_invoice":"TOTAL", "additional_discount_percentage":None, "discount_amount":discount_total, "amount":amount, "total":gross_total, "net_total":net_total})
+	data.append({"sales_invoice":"TOTAL", "custom_source":"TOTAL", "ref_practitioner":"TOTAL", "payment_mode":"TOTAL","additional_discount_percentage":None, "discount_amount":discount_total, "amount":amount, "total":gross_total, "net_total":net_total})
 	return data

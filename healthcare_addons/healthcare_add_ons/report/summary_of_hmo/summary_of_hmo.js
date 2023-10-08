@@ -31,5 +31,17 @@ frappe.query_reports["Summary of HMO"] = {
             "reqd": 0
 
         }
-	]
+	],
+    "formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+        if(!(typeof data["sales_invoice"]=="undefined"))
+            if (data["sales_invoice"].includes('Total')||data["sales_invoice"].includes('TOTAL')){
+                value = '<b>'+value+'</b>'
+            }
+		if(!(typeof data["hmo"]=="undefined"))
+            if (data["hmo"].includes('Total')||data["hmo"].includes('TOTAL')){
+                value = '<b>'+value+'</b>'
+            }
+		return value
+	}
 };

@@ -11,21 +11,15 @@ def execute(filters=None):
 	hmo = filters.get("hmo") if filters.get("hmo")is not None else ""
 	report_type = filters.get("report_type")
 
-	columns = [
-		{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
-		{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
-		{"label": "HMO", 'width': 150, "fieldname": "hmo"},
-		{"label": "Patient Name", 'width': 150, "fieldname": "patient_name"},
-		{"label": "Ref #", 'width': 150, "fieldname": "ref_no"},
-		{"label": "Items", 'width': 150, "fieldname": "items"},
-		{"label": "Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
-	]
-
+	columns = get_columns(report_type)
 	rows = get_data(from_date, to_date, report_type, hmo)
 
 	for row in rows:
 		row['items'], row['amount'] = get_items(row['sales_invoice'], report_type)
 		row['ref_no'] = get_ref_no(row['sales_invoice'])
+		row['card_no'] = get_card_no(row['sales_invoice'])
+		row['doctor'] = get_doctor(row['sales_invoice'])
+
 		if row['items'] != "":
 			data.append(row)
 	
@@ -34,7 +28,33 @@ def execute(filters=None):
 
 	return columns, data
 
+def get_columns(report_type):
+	columns = []
 
+	if report_type == 'Laboratory Tests':
+		columns = [
+			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
+			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
+			{"label": "HMO", 'width': 150, "fieldname": "hmo"},
+			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name"},
+			{"label": "Card #", 'width': 150, "fieldname": "card_no"},
+			{"label": "Ref #", 'width': 150, "fieldname": "ref_no"},
+			{"label": "Items", 'width': 150, "fieldname": "items"},
+			{"label": "Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
+		]
+	else:
+		columns = [
+			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
+			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
+			{"label": "HMO", 'width': 150, "fieldname": "hmo"},
+			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name"},
+			{"label": "Card #", 'width': 150, "fieldname": "card_no"},
+			{"label": "Ref #", 'width': 150, "fieldname": "ref_no"},
+			{"label": "Items", 'width': 150, "fieldname": "items"},
+			{"label": "Doctor", 'width': 150, "fieldname": "doctor"},
+			{"label": "Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
+		]
+	return columns
 
 def get_data(from_date, to_date, report_type, hmo):
 	data = []
@@ -71,6 +91,21 @@ def get_ref_no(si):
 		return rows[0][0]
 	else:
 		return ""
+
+def get_card_no(si):
+	rows = frappe.db.sql("""SELECT card_no from `tabInvoice Payment Table` where parent = %s and payment_mode = 'Charge to HMO'""",si)
+
+	if len(rows)>0:
+		return rows[0][0]
+	else:
+		return ""
+
+def get_doctor(si):
+	doctor = ""
+	rows = frappe.db.sql("""SELECT doctor from `tabPF and Incentive Item` where parent = %s and item_code = 'CONSULTATION'""",si)
+	for row in rows:
+		doctor = frappe.db.get_value("Healthcare Practitioner",row[0],"practitioner_name")+", MD"
+	return doctor
 
 def insert_subtotals(data, key_name):
 	new_data = []

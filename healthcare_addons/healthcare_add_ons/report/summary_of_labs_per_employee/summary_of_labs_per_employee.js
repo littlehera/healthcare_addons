@@ -23,5 +23,13 @@ frappe.query_reports["Summary of Labs per Employee"] = {
 			"options": "Employee",
             "reqd": 0	
 		}
-	]
+	],
+    "formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+        if(!(typeof data["employee_name"]=="undefined"))
+             if (data["employee_name"].includes('Total')||data["employee_name"].includes('TOTAL')){
+                value = '<b>'+value+'</b>'
+             }
+		return value
+	}
 };

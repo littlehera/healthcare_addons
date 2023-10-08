@@ -73,5 +73,5 @@ def insert_total_row(data, key_value):
 			total_turnover_amount += float(row['amount_to_turnover'])
 
 
-	data.append({"sales_invoice":"TOTAL", "amount":amount,"amount_to_turnover":total_turnover_amount})
+	data.append({"doctor":"TOTAL", "amount":amount,"amount_to_turnover":total_turnover_amount})
 	return data

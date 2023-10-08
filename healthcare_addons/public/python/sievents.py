@@ -123,7 +123,7 @@ def pull_item_pf_incentives(doc):
                     frappe.msgprint("Please enter doctor for PF/Incentive row"+str(pf_row.idx)+" | "+pf_row.item_code)
     
        ### For Sales Partner/Health Practitioner Incentives
-    if doc.custom_source in ["Doctor's Referral- Regular","Doctor's Referral- SC/PWD", "Promo"]:
+    if doc.custom_source in ["Doctor's Referral- MD","Doctor's Referral- Regular","Doctor's Referral- SC/PWD", "Promo"]:
         amount = doc.total_commission
         pf_type = "Incentive"
         item_code = "INCENTIVE"

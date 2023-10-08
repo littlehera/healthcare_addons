@@ -30,5 +30,17 @@ frappe.query_reports["Summary of Professional Fees"] = {
             "options": "Healthcare Practitioner",
             "reqd": 0
         }
-	]
+	],
+    "formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+        if(!(typeof data["parent"]=="undefined"))
+             if (data["parent"].includes('Total')||data["parent"].includes('TOTAL')){
+                value = '<b>'+value+'</b>'
+             }
+        if(!(typeof data["doctor"]=="undefined"))
+             if (data["doctor"].includes('Total')||data["doctor"].includes('TOTAL')){
+                value = '<b>'+value+'</b>'
+             }
+		return value
+	}
 };

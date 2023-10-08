@@ -25,7 +25,7 @@ frappe.query_reports["Summary of Incentives"] = {
 		},
         {
             "fieldname": "referred_by",
-            "label": __("Referring Practitioner"),
+            "label": __("Requesting Physician"),
             "fieldtype": "Link",
             "options": "Healthcare Practitioner",
             "reqd": 0
@@ -45,5 +45,21 @@ frappe.query_reports["Summary of Incentives"] = {
 
         }
 
-	]
+	],
+    "formatter": function(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+        if(!(typeof data["custom_practitioner_name"]=="undefined"))
+             if (data["custom_practitioner_name"].includes('Total')||data["custom_practitioner_name"].includes('TOTAL')){
+                value = '<b style="background: #ffe9a5;">'+value+'</b>'
+             }
+        if(!(typeof data["sales_invoice"]=="undefined"))
+             if (data["sales_invoice"].includes('Total')||data["sales_invoice"].includes('TOTAL')){
+                value = '<b style="background: #ffe9a5;">'+value+'</b>'
+             }
+        if(!(typeof data["custom_external_referrer"]=="undefined"))
+             if (data["custom_external_referrer"].includes('Total')||data["custom_external_referrer"].includes('TOTAL')){
+                value = '<b style="background: #ffe9a5;">'+value+'</b>'
+             }
+		return value
+	}
 };
