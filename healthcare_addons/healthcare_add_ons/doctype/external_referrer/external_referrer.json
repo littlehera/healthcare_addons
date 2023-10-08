@@ -10,7 +10,8 @@
  "field_order": [
   "ref_name",
   "contact",
-  "type"
+  "type",
+  "sales_partner"
  ],
  "fields": [
   {
@@ -33,11 +34,17 @@
    "label": "Type",
    "options": "Nurse\nMidwife",
    "reqd": 1
+  },
+  {
+   "fieldname": "sales_partner",
+   "fieldtype": "Link",
+   "label": "Sales Partner",
+   "options": "Sales Partner"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-02 10:16:02.203159",
+ "modified": "2023-10-08 19:48:04.727977",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "External Referrer",
