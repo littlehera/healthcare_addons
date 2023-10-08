@@ -20,6 +20,7 @@ def execute(filters=None):
 	]
 
 	data = get_data(from_date, to_date, report_type, ref_practitioner)
+	data = sorted(data, key=lambda k: k['doctor'], reverse=False)
 
 	for row in data:
 		row['posting_date'] = frappe.db.get_value("Sales Invoice",row['parent'],'posting_date')

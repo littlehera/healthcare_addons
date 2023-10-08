@@ -22,7 +22,7 @@ def execute(filters=None):
 
 		if row['items'] != "":
 			data.append(row)
-	
+	data = sorted(data, key=lambda k: k['hmo'], reverse=False)
 	data = insert_subtotals(data, 'hmo')
 	data = insert_total_row(data, 'hmo')
 
