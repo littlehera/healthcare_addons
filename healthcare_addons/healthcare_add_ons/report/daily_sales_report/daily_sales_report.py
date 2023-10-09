@@ -26,6 +26,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 				{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
+				{"label": "Patient", 'width': 150, "fieldname": "patient_name"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
 				{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 				{"label": "Discount %", 'width': 150, "fieldname": "additional_discount_percentage"},
@@ -39,6 +40,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 				{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
+				{"label": "Patient", 'width': 150, "fieldname": "patient_name"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
 				{"label": "Payment Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
 			]
@@ -92,7 +94,7 @@ def get_all_si(from_date, to_date, filters):
 
 	rows = frappe.db.sql("""SELECT DISTINCT si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt on pmt.parent = si.name 
 					  where si.posting_date >=%s and si.posting_date<=%s and si.docstatus = 1 and si.ref_practitioner like %s
-					  and si.custom_source like %s and pmt.payment_mode like %s""",
+					  and si.custom_source like %s and pmt.payment_mode like %s order by si.name asc""",
 					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
@@ -108,7 +110,8 @@ def get_all_payments(from_date, to_date, filters):
 	data = []
 	rows = frappe.db.sql("""SELECT pmt.payment_mode, pmt.amount, si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt 
 					  on pmt.parent = si.name where si.posting_date >=%s and si.posting_date<=%s and 
-					  si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s""",
+					  si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s
+					  order by si.name asc""",
 					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
