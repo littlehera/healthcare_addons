@@ -99,6 +99,8 @@ def get_all_si(from_date, to_date, filters):
 	for row in rows:
 		row['sales_invoice'] = row['name']
 		row['payment_modes'] = get_payment_modes(row['name'])
+		if "HMO" in row['custom_source']:
+			row['custom_source']+= ' ('+get_hmo(row['name'])+')'
 		data.append(row)
 
 	return data
@@ -207,3 +209,7 @@ def insert_total_row(data, key_value, totals_only):
 
 	data.append({"custom_source":"TOTAL","payment_mode":"TOTAL", "additional_discount_percentage":None, "discount_amount":discount_total, "amount":amount, "total":gross_total, "net_total":net_total})
 	return data
+
+def get_hmo(si):
+	hmo = frappe.db.sql("""SELECT custom_hmo from `tabSales Invoice` where name = %s""", si)
+	return hmo[0][0] if hmo[0][0] is not None else ""
