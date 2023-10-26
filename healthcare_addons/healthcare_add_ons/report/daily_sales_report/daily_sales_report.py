@@ -28,6 +28,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
 				{"label": "Patient", 'width': 150, "fieldname": "patient_name"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
+				{"label": "External Referrer", 'width': 150, "fieldname": "custom_external_referrer"},
 				{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 				{"label": "Discount %", 'width': 150, "fieldname": "additional_discount_percentage"},
 				{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
@@ -42,6 +43,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
 				{"label": "Patient", 'width': 150, "fieldname": "patient_name"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
+				{"label": "External Referrer", 'width': 150, "fieldname": "custom_external_referrer"},
 				{"label": "Payment Amount", 'width': 150, "fieldname": "amount", "fieldtype":"Currency", "precision":2}
 			]
 	else:
