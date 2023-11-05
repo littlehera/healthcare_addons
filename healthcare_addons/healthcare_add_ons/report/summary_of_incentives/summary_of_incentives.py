@@ -25,11 +25,14 @@ def execute(filters=None):
 
 def get_columns(report_type):
 	if report_type == "By MD":
+		# 1. Requesting Physician
+		# 2. Posting Date
+		# 3. Patient Name
 		columns =[
-			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 			{"label": "Requesting Physician #", 'width': 150, "fieldname": "custom_practitioner_name", "fieldtype":"Data"},
-			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name", "fieldtype":"Data"},
 			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
+			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name", "fieldtype":"Data"},
+			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 			{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 			{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
 			{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
@@ -37,11 +40,18 @@ def get_columns(report_type):
 			{"label": "Incentive Amount", 'width': 150, "fieldname": "total_commission", "fieldtype":"Currency", "precision":2}
 		]
 	else:
+		# 1. External Referrer
+		# 2. Posting Date
+		# 3. Patient name
+		# 4. Type of package
+		# 5. Gross Total
+		# 6. Incentive Amount
 		columns =[
-			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 			{"label": "External Referrer", 'width': 150, "fieldname": "custom_external_referrer", "fieldtype":"Data"},
-			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name", "fieldtype":"Data"},
 			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
+			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name", "fieldtype":"Data"},
+			{"label": "Package", 'width': 150, "fieldname": "item_code", "fieldtype":"Data"},
+			#{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 			{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 			{"label": "Incentive Amount", 'width': 150, "fieldname": "total_commission", "fieldtype":"Currency", "precision":2}
 		]
@@ -51,29 +61,44 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 	data = []
 
 	if report_type == "By MD":
+
 		data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_practitioner_name, patient_name, total, discount_amount, net_total, 
 					   			total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
 					   			from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
-					   			and total_commission > 0""",
+					   			and total_commission > 0 order by ref_practitioner asc, posting_date asc, patient_name asc""",
 								(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
 	else:
-		if package is None:
-			frappe.throw("Please select a Package")
+
+		if package is None or package == "":
+			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_external_referrer, si.patient_name, si.total, si.discount_amount, 
+									si.net_total, si.total_commission, (si.net_total - si.total_commission) as net_sales, si.amount_eligible_for_commission, itm.item_code
+									from `tabSales Invoice` si join `tabSales Invoice Item` itm on itm.parent = si.name 
+									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner like %s
+									and itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package')
+									order by si.custom_external_referrer asc, si.posting_date asc, si.patient_name asc, itm.item_code asc, si.total asc,
+									si.amount_eligible_for_commission asc""",
+									(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
+			for row in data:
+				row['total_commission'] = float(row['total_commission']) + float(get_incentive_amount(row['item_code']))
+				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(row['item_code']))
+				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
 		else:
 			data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_external_referrer, patient_name, total, discount_amount, net_total, 
 									total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
 									from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
-									and name in (SELECT parent from `tabSales Invoice Item` where item_code = %s)""",
+									and name in (SELECT parent from `tabSales Invoice Item` where item_code like%s)""",
 									(from_date, to_date, '%'+referred_by+'%', package), as_dict = True)
 			for row in data:
 				row['total_commission'] = float(row['total_commission']) + float(get_incentive_amount(package))
 				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(package))
+				row['item_code'] = package
 				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
 
 	return data
 
 def get_incentive_amount(product_bundle):
-	return frappe.db.get_value("Product Bundle", product_bundle, "custom_incentive_amount")
+	amount = frappe.db.get_value("Product Bundle", product_bundle, "custom_incentive_amount")
+	return amount if amount is not None else 0
 
 #			{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 # 			{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
