@@ -10,6 +10,7 @@ def validate_si(doc, method):
     check_employee_benefit(doc)
     validate_payments(doc)
     pull_item_pf_incentives(doc)
+    check_hmo_card_no(doc)
 
 def submit_si(doc,method):
     check_doctor_not_blank(doc)
@@ -221,3 +222,16 @@ def create_pe(doc):
 
         pe_doc.insert()
         pe_doc.submit()
+
+
+def check_hmo_card_no(doc):
+    has_card_no = False
+    if doc.custom_source == "HMO":
+        for row in doc.custom_invoice_payments:
+            if row.payment_mode == "Charge to HMO" and row.card_no is not None and row.card_no != "":
+                print("CARD NO #########################")
+                print(row.card_no)
+                has_card_no = True
+
+        if has_card_no == False:
+            frappe.throw("HMO Card No. is blank. Please place NONE or enter card number.")
