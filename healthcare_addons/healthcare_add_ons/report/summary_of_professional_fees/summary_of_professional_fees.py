@@ -33,8 +33,9 @@ def execute(filters=None):
 
 def get_data(from_date, to_date, report_type, ref_practitioner):
 	return frappe.db.sql("""SELECT parent, item_code, amount, doctor, amount_to_turnover from `tabPF and Incentive Item` 
-					   			where docstatus = 1 and pf_type=%s and doctor like %s""",
-								(report_type,'%'+ref_practitioner+'%'), as_dict = True)
+					   			where docstatus = 1 and pf_type=%s and doctor like %s and parent in (select name from `tabSales Invoice`
+					  			where posting_date >=%s and posting_date <=%s) order by parent""",
+								(report_type,'%'+ref_practitioner+'%', from_date, to_date), as_dict = True)
 
 def get_practitioner_name(ref_practitioner):
 	return frappe.db.get_value("Healthcare Practitioner",ref_practitioner,"practitioner_name")
