@@ -19,16 +19,14 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Item",
-   "options": "Item",
-   "reqd": 1
+   "options": "Item"
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "pf_type",
@@ -48,8 +46,7 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount to turnover",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "external_referrer",
@@ -62,7 +59,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-07 09:20:29.533435",
+ "modified": "2023-11-30 17:20:04.513271",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PF and Incentive Item",
