@@ -36,7 +36,7 @@ def get_columns(report_type):
 			{"label": "Gross Total", 'width': 150, "fieldname": "total", "fieldtype":"Currency", "precision":2},
 			{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
 			{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
-			{"label": "Amount Eligible for Incentive", 'width': 150, "fieldname": "amount_eligible_for_commission", "fieldtype":"Currency", "precision":2},
+			#{"label": "Amount Eligible for Incentive", 'width': 150, "fieldname": "amount_eligible_for_commission", "fieldtype":"Currency", "precision":2},
 			{"label": "Incentive Amount", 'width': 150, "fieldname": "total_commission", "fieldtype":"Currency", "precision":2}
 		]
 	else:
