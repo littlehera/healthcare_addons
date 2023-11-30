@@ -1,6 +1,22 @@
 [
  {
   "default_value": null,
+  "doc_type": "Employee",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "naming_series",
+  "is_system_generated": 0,
+  "modified": "2023-10-27 13:46:04.529689",
+  "module": null,
+  "name": "Employee-naming_series-options",
+  "property": "options",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "HR-EMP-"
+ },
+ {
+  "default_value": null,
   "doc_type": "Sales Order",
   "docstatus": 0,
   "doctype": "Property Setter",
@@ -2007,22 +2023,6 @@
   "doctype_or_field": "DocField",
   "field_name": "mobile",
   "is_system_generated": 0,
-  "modified": "2023-09-22 10:13:46.058629",
-  "module": null,
-  "name": "Patient-mobile-reqd",
-  "property": "reqd",
-  "property_type": "Check",
-  "row_name": null,
-  "value": "1"
- },
- {
-  "default_value": null,
-  "doc_type": "Patient",
-  "docstatus": 0,
-  "doctype": "Property Setter",
-  "doctype_or_field": "DocField",
-  "field_name": "mobile",
-  "is_system_generated": 0,
   "modified": "2023-09-22 10:13:46.146079",
   "module": null,
   "name": "Patient-mobile-allow_in_quick_entry",
@@ -2366,5 +2366,21 @@
   "property_type": "Data",
   "row_name": null,
   "value": "Requesting Physician"
+ },
+ {
+  "default_value": null,
+  "doc_type": "Patient",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "last_name",
+  "is_system_generated": 0,
+  "modified": "2023-10-27 13:48:55.568808",
+  "module": null,
+  "name": "Patient-last_name-reqd",
+  "property": "reqd",
+  "property_type": "Check",
+  "row_name": null,
+  "value": "1"
  }
 ]

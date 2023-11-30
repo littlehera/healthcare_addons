@@ -1,7 +1,7 @@
 {
  "add_total_row": 0,
  "columns": [],
- "creation": "2023-10-05 09:43:07.267285",
+ "creation": "2023-10-27 13:46:39.732814",
  "disable_prepared_report": 0,
  "disabled": 0,
  "docstatus": 0,
@@ -9,17 +9,24 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2023-10-05 10:01:14.764471",
+ "modified": "2023-11-30 17:04:10.305860",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Daily Sales Report",
  "prepared_report": 0,
+ "query": "SELECT name, customer, posting_date, total, discount_amount, net_total from `tabSales Invoice` where posting_date = CURDATE() and docstatus = 1;",
  "ref_doctype": "Sales Invoice",
  "report_name": "Daily Sales Report",
  "report_type": "Script Report",
  "roles": [
   {
    "role": "Receptionist"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Healthcare Administrator"
   }
  ]
 }

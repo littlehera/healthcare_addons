@@ -10,6 +10,30 @@
   "is_standard": "Yes",
   "javascript": null,
   "json": null,
+  "letter_head": null,
+  "modified": "2023-09-20 10:44:19.414449",
+  "module": "Stock",
+  "name": "Stock Ledger Variance",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Stock Ledger Entry",
+  "reference_report": null,
+  "report_name": "Stock Ledger Variance",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": []
+ },
+ {
+  "add_total_row": 0,
+  "columns": [],
+  "disable_prepared_report": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
   "letter_head": "",
   "modified": "2017-06-23 04:46:43.209008",
   "module": "Manufacturing",
@@ -7954,7 +7978,7 @@
   "javascript": null,
   "json": null,
   "letter_head": null,
-  "modified": "2023-10-05 10:01:14.764471",
+  "modified": "2023-11-30 17:04:10.305860",
   "module": "Healthcare Add-ons",
   "name": "Daily Sales Report",
   "prepared_report": 0,
@@ -7970,6 +7994,18 @@
     "parentfield": "roles",
     "parenttype": "Report",
     "role": "Receptionist"
+   },
+   {
+    "parent": "Daily Sales Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Daily Sales Report",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Healthcare Administrator"
    }
   ]
  },
