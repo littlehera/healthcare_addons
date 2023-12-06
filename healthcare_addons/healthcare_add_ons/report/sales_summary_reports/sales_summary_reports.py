@@ -29,6 +29,7 @@ def get_columns(totals_only, report_type):
 				{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
 				{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 				{"label": "Source", 'width': 150, "fieldname": "custom_source"},
+				{"label": "HMO", 'width': 150, "fieldname": "custom_hmo"},
 				{"label": "Referred By", 'width': 150, "fieldname": "custom_practitioner_name"},
 				{"label": "External Referrer", 'width': 150, "fieldname": "custom_external_referrer"},
 				{"label": "Patient Name", 'width': 150, "fieldname": "patient_name"},
