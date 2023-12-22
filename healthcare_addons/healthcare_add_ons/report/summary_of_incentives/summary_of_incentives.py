@@ -19,7 +19,7 @@ def execute(filters=None):
 	key_ = 'custom_practitioner_name' if report_type == "By MD" else 'custom_external_referrer'
 
 	data = insert_subtotals(data,key_)
-	data = insert_total_row(data,key_)
+	data = insert_total_row(data,key_, report_type)
 
 	return columns, data
 
@@ -30,6 +30,7 @@ def get_columns(report_type):
 		# 3. Patient Name
 		columns =[
 			{"label": "Requesting Physician #", 'width': 150, "fieldname": "custom_practitioner_name", "fieldtype":"Data"},
+			{"label": "2% Of Labs", 'width': 150, "fieldname": "labs_percentage", "fieldtype":"Currency", "precision":2},
 			{"label": "Posting Date", 'width': 80, "fieldname": "posting_date"},
 			{"label": "Patient Name", 'width': 150, "fieldname": "patient_name", "fieldtype":"Data"},
 			{"label": "Sales Invoice #", 'width': 150, "fieldname": "sales_invoice", "fieldtype":"Link", "options":"Sales Invoice"},
@@ -67,6 +68,8 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 					   			from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
 					   			and total_commission > 0 order by ref_practitioner asc, posting_date asc, patient_name asc""",
 								(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
+		for row in data:
+			row['labs_percentage'] = float(row['net_total'])*0.02
 	else:
 
 		if package is None or package == "":
@@ -112,18 +115,21 @@ def insert_subtotals(data, key_name):
 	total = 0
 	discount_amount = 0
 	net_total = 0
-	total_commission = 0 
+	total_commission = 0
+	total_labs_perc = 0
 
 	prev_key_value = None
 	for row in data:
 		if (prev_key_value!= row[key_name]) or (prev_key_value is None):
 			if (prev_key_value is not None):
 				new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount,
-					 			"net_total":net_total, "total_commission":total_commission})
+					 			"net_total":net_total, "total_commission":total_commission, "labs_percentage":total_labs_perc})
 				total = 0
 				discount_amount = 0
 				net_total = 0
-				total_commission = 0 
+				total_commission = 0
+				if key_name == "custom_practitioner_name":
+					total_labs_perc = 0
 			prev_key_value = row[key_name]
 		
 		new_data.append(row)
@@ -131,16 +137,19 @@ def insert_subtotals(data, key_name):
 		discount_amount += float(row['discount_amount'])
 		net_total += float(row['net_total'])
 		total_commission += float(row['total_commission'])
+		if key_name == "custom_practitioner_name":
+					total_labs_perc += float(row['labs_percentage'])
 	
-	new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount,
-					"net_total":net_total, "total_commission":total_commission})
+	new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount, 
+				  "labs_percentage":total_labs_perc, "net_total":net_total, "total_commission":total_commission})
 	return new_data
 
-def insert_total_row(data, key_value):
+def insert_total_row(data, key_value, report_type):
 	total = 0
 	discount_amount = 0
 	net_total = 0
 	total_commission = 0 
+	total_labs_perc = 0
 	for row in data:
 		if 'Total for' in row[key_value]:
 			continue
@@ -149,8 +158,10 @@ def insert_total_row(data, key_value):
 			discount_amount += float(row['discount_amount'])
 			net_total += float(row['net_total'])
 			total_commission += float(row['total_commission'])
+			if report_type == "By MD":
+				total_labs_perc += float(row['labs_percentage'])
 
 
-	data.append({key_value:"TOTAL", "total":total,"discount_amount":discount_amount,
+	data.append({key_value:"TOTAL", "total":total,"discount_amount":discount_amount, "labs_percentage":total_labs_perc,
 					 			"net_total":net_total, "total_commission":total_commission})
 	return data
