@@ -24,6 +24,12 @@ frappe.query_reports["Summary of Incentives"] = {
             "reqd": 1
 		},
         {
+            "fieldname": "totals_only",
+            "label": __("Show Totals Only?"),
+            "fieldtype": "Check",
+            "default":0
+        },
+        {
             "fieldname": "referred_by",
             "label": __("Requesting Physician"),
             "fieldtype": "Link",
