@@ -97,7 +97,7 @@ def get_all_si(from_date, to_date, filters):
 
 	rows = frappe.db.sql("""SELECT DISTINCT si.* from `tabSales Invoice` si join `tabInvoice Payment Table` pmt on pmt.parent = si.name 
 					  where si.posting_date >=%s and si.posting_date<=%s and si.docstatus = 1 and si.ref_practitioner like %s
-					  and si.custom_source like %s and pmt.payment_mode like %s order by si.name asc""",
+					  and si.custom_source like %s and pmt.payment_mode like %s order by si.name asc, si.posting_date asc""",
 					  (from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	for row in rows:
 		row['sales_invoice'] = row['name']
