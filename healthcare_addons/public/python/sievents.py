@@ -79,7 +79,13 @@ def pull_item_pf_incentives(doc):
                 amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
                 amount_to_turnover = amount
-            
+            else:
+                if "consultation" in str(item.item_code).lower():
+                    doctor = item.custom_doctor
+                    pf_type = "MD Consultation PF"
+                    amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount
+                    amount_to_turnover = amount
+
         if amount > 0:
             total_pfs += amount
             if doctor is not None:
