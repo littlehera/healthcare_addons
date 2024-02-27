@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"3e0tgkLJtl\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"o2ANxAJP6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"Kaqgm0AyT7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Patient\",\"col\":3}},{\"id\":\"ky9r9n5oDa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test Template\",\"col\":3}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Documents</span>\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":3}},{\"id\":\"V8fdl-OJZ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Tests\",\"col\":3}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":4}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"0wrFrLvRED\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of HMO Transactions\",\"col\":4}},{\"id\":\"m3wE1VFAwH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Incentives\",\"col\":4}},{\"id\":\"S_0sbTlIbo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Professional Fees\",\"col\":4}},{\"id\":\"RzdFF1JYES\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Lab Tests Conducted\",\"col\":4}},{\"id\":\"vgt5F9W4BC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Labs per Employee\",\"col\":4}}]",
+ "content": "[{\"id\":\"0pXlWuxNBp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Premier Lab Shortcuts</span>\",\"col\":12}},{\"id\":\"3e0tgkLJtl\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"o2ANxAJP6H\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Item\",\"col\":3}},{\"id\":\"1ELSEAlOMN\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Doctors and Radiologists\",\"col\":3}},{\"id\":\"Kaqgm0AyT7\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Patient\",\"col\":3}},{\"id\":\"ky9r9n5oDa\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test Template\",\"col\":3}},{\"id\":\"GD1v9lwBE3\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Documents</span>\",\"col\":12}},{\"id\":\"yHPgrqmG7p\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoices\",\"col\":3}},{\"id\":\"V8fdl-OJZ3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Tests\",\"col\":3}},{\"id\":\"-S7K2FZV5g\",\"type\":\"paragraph\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"wRfH-iBF9b\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Daily Sales Report\",\"col\":4}},{\"id\":\"jjPprmVBef\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Summary Reports\",\"col\":4}},{\"id\":\"0wrFrLvRED\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of HMO Transactions\",\"col\":4}},{\"id\":\"m3wE1VFAwH\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Incentives\",\"col\":4}},{\"id\":\"S_0sbTlIbo\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Professional Fees\",\"col\":4}},{\"id\":\"RzdFF1JYES\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Lab Tests Conducted\",\"col\":4}},{\"id\":\"vgt5F9W4BC\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Summary of Labs per Employee\",\"col\":4}}]",
  "creation": "2023-09-25 14:13:30.640513",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Premier Lab",
  "links": [],
- "modified": "2024-02-11 19:04:06.609162",
+ "modified": "2024-02-27 20:55:10.590454",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Premier Lab",
@@ -34,6 +34,14 @@
  ],
  "sequence_id": 2.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Doctors and Radiologists",
+   "link_to": "Healthcare Practitioner",
+   "stats_filter": "[]",
+   "type": "DocType"
+  },
   {
    "color": "Grey",
    "doc_view": "List",
