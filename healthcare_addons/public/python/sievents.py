@@ -74,11 +74,22 @@ def pull_item_pf_incentives(doc):
         else:
             item_group = frappe.db.get_value("Item", item.item_code, "item_group")
             if item_group == "Laboratory":
-                doctor = item.custom_doctor
-                amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
-                pf_type = "Reading PF"
-                amount_to_turnover = amount
+                pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
+                # print(item.item_code,pf_perc,"###################")
+                if pf_perc > 0:
+                    # print("PF PERC")
+                    doctor = item.custom_doctor
+                    amount = (pf_perc/100)*item.amount
+                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                    pf_type = "Reading PF"
+                    amount_to_turnover = amount
+                    print(amount_to_turnover,"AMOUNT TO TURNOVER")
+                else:
+                    doctor = item.custom_doctor
+                    amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                    pf_type = "Reading PF"
+                    amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
@@ -107,6 +118,7 @@ def pull_item_pf_incentives(doc):
                     } 
                 if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
                     pf_row = doc.append("custom_pf_and_incentives",pf_row)
+
     ##FOR BUNDLE ITEMS
     if doc.packed_items:
         for item in doc.packed_items:
@@ -180,8 +192,8 @@ def check_in_pf_items(row, items, doctor = None):
 
 def check_doctor_not_blank(doc):
     for row in doc.custom_pf_and_incentives:
-        if (row.doctor is None or row.doctor == "") and (row.external_referrer is None or row.external_referrer == ""):
-            frappe.throw("Enter a valid doctor for PF/INCENTIVE "+row.item_code+"| row # "+str(row.idx))
+        if (row.doctor is None or row.doctor == "") and (row.external_referrer is None or row.external_referrer == "") and (row.labtech is None or row.labtech == ""):
+            frappe.throw("Enter a valid doctor/referrer/radiologist for PF/INCENTIVE "+row.item_code+"| row # "+str(row.idx))
         
 def create_pe(doc):
     reference_date = doc.posting_date
