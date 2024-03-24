@@ -192,7 +192,7 @@ def check_in_pf_items(row, items, doctor = None):
 
 def check_doctor_not_blank(doc):
     for row in doc.custom_pf_and_incentives:
-        if (row.doctor is None or row.doctor == "") and (row.external_referrer is None or row.external_referrer == "") and (row.labtech is None or row.labtech == ""):
+        if (row.doctor is None or row.doctor == "") and (row.external_referrer is None or row.external_referrer == ""):
             frappe.throw("Enter a valid doctor/referrer/radiologist for PF/INCENTIVE "+row.item_code+"| row # "+str(row.idx))
         
 def create_pe(doc):
