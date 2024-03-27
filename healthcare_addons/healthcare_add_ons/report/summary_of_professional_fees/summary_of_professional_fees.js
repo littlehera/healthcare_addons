@@ -20,7 +20,7 @@ frappe.query_reports["Summary of Professional Fees"] = {
 			"fieldname":"report_type",
 			"label": __("Report Type"),
 			"fieldtype": "Select",
-            "options": ['MD Consultation PF','Reading PF'],
+            "options": ['Consultation PF (by Doctor)','Reading PF (by Reader)', 'PF By Lab Test'],
             "reqd": 1
 		},
 		{
@@ -28,6 +28,19 @@ frappe.query_reports["Summary of Professional Fees"] = {
             "label": __("Doctor"),
             "fieldtype": "Link",
             "options": "Healthcare Practitioner",
+            "reqd": 0
+        },
+        {
+            "fieldname": "item_code",
+            "label": __("Lab Test"),
+            "fieldtype": "Link",
+            "options": "Item",
+            "reqd": 0
+        },
+        {
+            "fieldname": "show_totals",
+            "label": __("Show Totals Only?"),
+            "fieldtype": "Check",
             "reqd": 0
         }
 	],
