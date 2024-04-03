@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Premier Lab",
  "links": [],
- "modified": "2024-02-27 20:55:10.590454",
+ "modified": "2024-04-03 12:28:58.595200",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Premier Lab",
@@ -30,6 +30,9 @@
   },
   {
    "role": "Administrator"
+  },
+  {
+   "role": "Laboratory User"
   }
  ],
  "sequence_id": 2.0,
