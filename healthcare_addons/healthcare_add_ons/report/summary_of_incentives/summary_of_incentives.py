@@ -19,12 +19,13 @@ def execute(filters=None):
 
 	key_ = 'custom_practitioner_name' if report_type == "By MD" else 'custom_external_referrer'
 
+	#data = sorted(data, key=lambda k: k[key_], reverse=False)
 	if totals_only == 1:
 		data = get_totals_only(data, key_)
 	else:
 		data = insert_subtotals(data,key_)
 	data = insert_total_row(data,key_, report_type)
-
+	
 	return columns, data
 
 def get_columns(report_type, totals_only):
@@ -84,13 +85,17 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 
 	if report_type == "By MD":
 
-		data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_practitioner_name, patient_name, total, discount_amount, net_total, 
+		data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, ref_practitioner, patient_name, total, discount_amount, net_total, 
 								total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
 								from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
-								and total_commission > 0 order by ref_practitioner asc, posting_date asc, patient_name asc""",
+								and total_commission > 0 order by ref_practitioner asc, sales_invoice asc, posting_date asc, patient_name asc""",
 								(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
 		for row in data:
 			row['labs_percentage'] = float(row['net_total'])*0.02
+			row['custom_practitioner_name'] = get_practitioner_name(row['ref_practitioner'])
+		
+		data = sorted(data, key=lambda k: k['custom_practitioner_name'], reverse=False)
+
 	else:
 
 		if package is None or package == "":
@@ -119,6 +124,16 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
 
 	return data
+
+def get_practitioner_name(ref_practitioner):
+	fname = ""
+	lname = ""
+	fullname = ""
+
+	doctor = frappe.get_doc("Healthcare Practitioner", ref_practitioner)
+	fullname = str(doctor.last_name) + ", " + str(doctor.first_name)
+
+	return fullname
 
 def get_incentive_amount(product_bundle):
 	amount = frappe.db.get_value("Product Bundle", product_bundle, "custom_incentive_amount")
