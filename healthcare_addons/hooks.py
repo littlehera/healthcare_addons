@@ -134,6 +134,9 @@ doc_events = {
 	},
     "Patient":{
         "validate": "healthcare_addons.public.python.patevents.on_save"
+	},
+    "Lab Test":{
+        "validate": "healthcare_addons.public.python.ltevents.on_save"
 	}
 }
 
