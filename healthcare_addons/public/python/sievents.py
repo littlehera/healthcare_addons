@@ -131,14 +131,14 @@ def pull_item_pf_incentives(doc):
                 # Get item price for the package item where price list = si price list.                
                 rate = get_item_price(item.parent_item,doc.selling_price_list)
                 amount = (pf_perc/100)*rate
-                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                # amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
                 amount_to_turnover = amount
                 print(amount_to_turnover,"AMOUNT TO TURNOVER")
             
             elif pf_fixed >0:
                 amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                # amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
 
             else:
