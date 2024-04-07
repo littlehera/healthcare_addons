@@ -122,8 +122,28 @@ def pull_item_pf_incentives(doc):
     ##FOR BUNDLE ITEMS
     if doc.packed_items:
         for item in doc.packed_items:
-            amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-            pf_type = "Reading PF"
+            
+            pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
+            pf_fixed = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+            
+            if pf_perc > 0:
+                # print("PF PERC")
+                # Get item price for the package item where price list = si price list.                
+                rate = get_item_price(item.parent_item,doc.selling_price_list)
+                amount = (pf_perc/100)*rate
+                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                pf_type = "Reading PF"
+                amount_to_turnover = amount
+                print(amount_to_turnover,"AMOUNT TO TURNOVER")
+            
+            elif pf_fixed >0:
+                amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                pf_type = "Reading PF"
+
+            else:
+                amount = 0
+                
             amount_to_turnover = amount
             if amount > 0:
                 total_pfs += amount
@@ -159,6 +179,13 @@ def pull_item_pf_incentives(doc):
                 pf_row = doc.append("custom_pf_and_incentives",pf_row)
 
     doc.custom_net_sales = doc.grand_total - total_pfs
+
+def get_item_price(item_code, price_list):
+    item_price = frappe.db.sql("""SELECT price_list_rate from `tabItem Price` where item_code = %s and price_list = %s""",(item_code, price_list))
+    if len(item_price)>0:
+        return item_price[0][0] if item_price[0][0] is not None else 0
+    else:
+        return 0
 
 def is_package(item_code):
     is_pckg = False
