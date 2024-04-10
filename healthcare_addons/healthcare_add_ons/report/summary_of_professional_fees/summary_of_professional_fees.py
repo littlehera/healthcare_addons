@@ -36,8 +36,9 @@ def execute(filters=None):
 	for row in data:
 		row['posting_date'] = frappe.db.get_value("Sales Invoice",row['parent'],'posting_date')
 		row['patient_name'] = frappe.db.get_value("Sales Invoice",row['parent'],'patient_name')
-		row['grand_total'] = frappe.db.get_value("Sales Invoice",row['parent'],'grand_total')
-		row['net_total'] = frappe.db.get_value("Sales Invoice",row['parent'],'net_total')
+		row['grand_total'], row['net_total'] = get_item_amounts(row['item_code'], row['parent'])
+		#row['grand_total'] = frappe.db.get_value("Sales Invoice",row['parent'],'grand_total')
+		#row['net_total'] = frappe.db.get_value("Sales Invoice",row['parent'],'net_total')
 		row['doctor'] = get_practitioner_name(row['doctor'])
 
 	if not show_totals:
@@ -70,7 +71,12 @@ def get_data(from_date, to_date, report_type, ref_practitioner, item_code):
 def get_practitioner_name(ref_practitioner):
 	return frappe.db.get_value("Healthcare Practitioner",ref_practitioner,"practitioner_name")
 
-
+def get_item_amounts(item_code, parent):
+	rates = frappe.db.sql("""SELECT rate, net_rate from `tabSales Invoice Item` where item_code=%s and parent = %s""",(item_code, parent))
+	if len(rates)>0:
+		return rates[0][0], rates[0][1]
+	else:
+		return 0,0
 
 def insert_subtotals(data, key_name):
 	new_data = []
