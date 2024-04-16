@@ -76,6 +76,14 @@ def get_item_amounts(item_code, parent):
 	if len(rates)>0:
 		return rates[0][0], rates[0][1]
 	else:
+		return get_packed_item_amount(item_code, parent)
+	
+def get_packed_item_amount(item_code, parent):
+	rates = frappe.db.sql("""SELECT rate, net_rate from `tabSales Invoice Item` where parent = %s and item_code in 
+					   (select parent_item from `tabPacked Item` where item_code = %s and parent = %s)""",(parent, item_code, parent))
+	if len(rates)>0:
+		return rates[0][0], rates[0][1]
+	else:
 		return 0,0
 
 def insert_subtotals(data, key_name):
