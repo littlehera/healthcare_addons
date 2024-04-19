@@ -99,18 +99,18 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 	else:
 
 		if package is None or package == "":
-			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_external_referrer, si.patient_name, si.total, si.discount_amount, 
-									si.net_total, si.total_commission, (si.net_total - si.total_commission) as net_sales, si.amount_eligible_for_commission, itm.item_code
-									from `tabSales Invoice` si join `tabSales Invoice Item` itm on itm.parent = si.name 
+			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, itm.external_referrer, si.patient_name, si.total, si.discount_amount, 
+									si.net_total, si.total_commission, (si.net_total - si.total_commission) as net_sales, si.amount_eligible_for_commission, itm.item_code,
+									itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name 
 									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner like %s
-									and itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package')
+									and (itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package') or (itm.item_code ="REFERRAL"))
 									order by si.custom_external_referrer asc, si.posting_date asc, si.patient_name asc, itm.item_code asc, si.total asc,
 									si.amount_eligible_for_commission asc""",
 									(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
 			for row in data:
-				row['total_commission'] = float(row['total_commission']) + float(get_incentive_amount(row['item_code']))
-				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(row['item_code']))
-				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
+				row['total_commission'] = float(row['total_commission']) + float(row['amount_to_turnover'])
+				row['net_sales'] = float(row['net_sales']) - float(row['amount_to_turnover'])
+				row['custom_external_referrer'] = row['external_referrer'] if row['external_referrer'] is not None else ""
 		else:
 			data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_external_referrer, patient_name, total, discount_amount, net_total, 
 									total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
@@ -148,6 +148,8 @@ def insert_subtotals(data, key_name):
 	net_total = 0
 	total_commission = 0
 	total_labs_perc = 0
+
+	data = sorted(data, key=lambda k: k[key_name], reverse=False)
 
 	prev_key_value = None
 	for row in data:
@@ -230,3 +232,19 @@ def get_totals_only(data, key_name):
 	new_data.append({key_name:str(prev_key_value), "total":total,"discount_amount":discount_amount, 
 				  "labs_percentage":total_labs_perc, "net_total":net_total, "total_commission":total_commission})
 	return new_data
+
+
+def is_package(item_code):
+    is_pckg = False
+    count_package = frappe.db.sql("""SELECT COUNT(*) from `tabProduct Bundle` where custom_type = 'Package' and new_item_code = %s""",item_code)
+    if count_package[0][0]>0:
+        is_pckg = True
+    return is_pckg
+
+
+def is_promo(item_code):
+    is_promo = False
+    count_promo = frappe.db.sql("""SELECT COUNT(*) from `tabProduct Bundle` where custom_type = 'Promo' and new_item_code = %s""",item_code)
+    if count_promo[0][0]>0:
+        is_promo = True
+    return is_promo

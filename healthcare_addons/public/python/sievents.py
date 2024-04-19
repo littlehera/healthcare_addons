@@ -178,6 +178,26 @@ def pull_item_pf_incentives(doc):
             if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
                 pf_row = doc.append("custom_pf_and_incentives",pf_row)
 
+    if doc.custom_source =="Package":
+        total_reg_labs = get_total_of_regular_labs(doc.items)
+        amount = total_reg_labs * 0.05
+        pf_type = "Incentive"
+        item_code = "REFERRAL"
+        amount_to_turnover = amount
+
+        if amount > 0:
+            total_pfs += amount
+            pf_row = {
+                "item_code":item_code,
+                "amount": amount,
+                #"external_referrer": doc.custom_external_referrer,
+                "pf_type": pf_type,
+                "amount_to_turnover":amount_to_turnover
+                }
+            
+            if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor = None):
+                pf_row = doc.append("custom_pf_and_incentives",pf_row)
+
     doc.custom_net_sales = doc.grand_total - total_pfs
 
 def get_item_price(item_code, price_list):
@@ -276,3 +296,14 @@ def check_hmo_card_no(doc):
 
         if has_card_no == False:
             frappe.throw("HMO Card No. is blank. Please place NONE or enter card number.")
+
+def get_total_of_regular_labs(items):
+    total_reg_labs = 0
+    for item in items:
+        if is_package(item.item_code):
+            continue
+        elif is_promo(item.item_code):
+            continue
+        else:
+            total_reg_labs += item.amount
+    return total_reg_labs
