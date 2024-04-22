@@ -178,11 +178,16 @@ def pull_item_pf_incentives(doc):
             if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
                 pf_row = doc.append("custom_pf_and_incentives",pf_row)
 
-    if doc.custom_source =="Package":
+    if "Package" in doc.custom_source:
         total_reg_labs = get_total_of_regular_labs(doc.items)
         amount = total_reg_labs * 0.05
         pf_type = "Incentive"
         item_code = "REFERRAL"
+        #amount_to_turnover = amount
+
+        if "SC/PWD" in doc.custom_source:
+            amount = amount * 0.8
+        
         amount_to_turnover = amount
 
         if amount > 0:
