@@ -15,10 +15,10 @@
   "doctype": "Client Script",
   "dt": "Lab Test",
   "enabled": 1,
-  "modified": "2024-03-26 11:17:52.221710",
+  "modified": "2024-05-12 20:23:10.572834",
   "module": "Healthcare Add-ons",
   "name": "Lab Test Script",
-  "script": "cur_frm.add_fetch(\"custom_sales_invoice\",\"patient\",\"patient\")\n\nfrappe.ui.form.on('Lab Test', {\n\trefresh(frm) {\n\t\tfrm.set_query(\"custom_radiologist\", function() {\n        return {\n            \"filters\": {\n                \"custom_type\": \"Radiologist\"\n            }\n        };\n    });\n\t}\n})\n\nfrappe.ui.form.on(\"Lab Test\",\"custom_radiologist\",function(frm){\n    if(frm.doc.custom_radiologist)\n    frappe.call({\n        \"method\":\"frappe.client.get\",\n        \"args\":{\n            \"doctype\":\"Healthcare Practitioner\",\n            \"name\":frm.doc.custom_radiologist\n        },\n        callback:function(r){\n            if(r.message){\n                frm.set_value(\"custom_radiologist_name\",r.message.practitioner_name)\n            }\n        }\n    });\n    else{\n        frm.set_value(\"custom_radiologist_name\",\"\")\n    }\n})",
+  "script": "cur_frm.add_fetch(\"custom_sales_invoice\",\"patient\",\"patient\")\n\nfrappe.ui.form.on('Lab Test', {\n\trefresh(frm) {\n\t\tfrm.set_query(\"custom_radiologist\", function() {\n        return {\n            \"filters\": {\n                \"custom_type\": \"Radiologist\"\n            }\n        };\n    });\n    \t\tfrm.set_query(\"custom_sales_invoice\", function() {\n        return {\n            \"filters\": {\n                \"docstatus\": \"1\"\n            }\n        };\n    });\n\t}\n})\n\nfrappe.ui.form.on(\"Lab Test\",\"custom_radiologist\",function(frm){\n    if(frm.doc.custom_radiologist)\n    frappe.call({\n        \"method\":\"frappe.client.get\",\n        \"args\":{\n            \"doctype\":\"Healthcare Practitioner\",\n            \"name\":frm.doc.custom_radiologist\n        },\n        callback:function(r){\n            if(r.message){\n                frm.set_value(\"custom_radiologist_name\",r.message.practitioner_name)\n            }\n        }\n    });\n    else{\n        frm.set_value(\"custom_radiologist_name\",\"\")\n    }\n})",
   "view": "Form"
  }
 ]
