@@ -11,6 +11,7 @@ def validate_si(doc, method):
     validate_payments(doc)
     pull_item_pf_incentives(doc)
     check_hmo_card_no(doc)
+    check_or(doc)
 
 def submit_si(doc,method):
     check_doctor_not_blank(doc)
@@ -312,3 +313,17 @@ def get_total_of_regular_labs(items):
         else:
             total_reg_labs += item.amount
     return total_reg_labs
+
+def check_or(doc):
+    for payment in doc.custom_invoice_payments:
+        print(payment.payment_mode, payment.ref_no, doc.name)
+        if payment.payment_mode in ["Cash","Credit Card", "GCash", "Charge to Company"]:
+            if get_or_match(payment.ref_no, doc.name)>0:
+                frappe.throw("REF NO/OR NO Already Exists!")
+
+def get_or_match(or_no, si):
+    count_or = frappe.db.sql("""SELECT COUNT(*) from `tabInvoice Payment Table` where ref_no = %s and parent != %s""",(or_no, si))
+    if len(count_or)>0:
+        return count_or[0][0]
+    else:
+        return 0
