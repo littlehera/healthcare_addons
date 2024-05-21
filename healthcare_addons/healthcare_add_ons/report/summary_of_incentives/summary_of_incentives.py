@@ -100,7 +100,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 
 		if package is None or package == "":
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, itm.external_referrer, si.patient_name, si.total, si.discount_amount, 
-									si.net_total, si.total_commission, (si.net_total - si.total_commission) as net_sales, si.amount_eligible_for_commission, itm.item_code,
+									si.net_total, si.total_commission, (si.net_total) as net_sales, si.amount_eligible_for_commission, itm.item_code,
 									itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name 
 									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner like %s
 									and (itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package') or (itm.item_code ="REFERRAL"))
@@ -108,7 +108,8 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 									si.amount_eligible_for_commission asc""",
 									(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
 			for row in data:
-				row['total_commission'] = float(row['total_commission']) + float(row['amount_to_turnover'])
+				#row['total_commission'] = float(row['total_commission']) + float(row['amount_to_turnover'])
+				row['total_commission'] = float(row['amount_to_turnover'])
 				row['net_sales'] = float(row['net_sales']) - float(row['amount_to_turnover'])
 				row['custom_external_referrer'] = row['external_referrer'] if row['external_referrer'] is not None else ""
 		else:
