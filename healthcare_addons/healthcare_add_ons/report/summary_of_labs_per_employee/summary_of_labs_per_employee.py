@@ -17,12 +17,13 @@ def execute(filters=None):
 		{"label": "Total Benefit Amount", 'width': 200, "fieldname": "amount", "fieldtype":"Currency", "precision":2}	
 	]
 
-	data = frappe.db.sql("""SELECT si.custom_employee, si.patient, si.patient_name,  sum(pmt.amount) as amount from `tabSales Invoice` si join `tabInvoice Payment Table` pmt
+	data = frappe.db.sql("""SELECT si.custom_employee, si.patient, si.patient_name,  pmt.amount as amount from `tabSales Invoice` si join `tabInvoice Payment Table` pmt
 					  		on pmt.parent = si.name where si.posting_date >= %s and si.posting_date<=%s and si.docstatus = 1 and
-					  		si.custom_employee like %s and pmt.payment_mode = 'Employee Benefit' group by si.custom_employee""",
+					  		si.custom_employee like %s and pmt.payment_mode = 'Employee Benefit' order by si.custom_employee""",
 							(from_date, to_date, '%'+employee+'%'), as_dict=True)
 	
 	for row in data:
+		print(row['custom_employee'], row['patient_name'])
 		row['employee_name'] = frappe.db.get_value("Employee", row['custom_employee'], 'employee_name')
 
 	data = insert_subtotals(data, 'employee_name')
