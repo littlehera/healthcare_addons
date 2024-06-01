@@ -59,7 +59,7 @@ def get_columns(report_type, totals_only):
 				{"label": "Discount Amount", 'width': 150, "fieldname": "discount_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "Net Total", 'width': 150, "fieldname": "net_total", "fieldtype":"Currency", "precision":2},
 				#{"label": "Amount Eligible for Incentive", 'width': 150, "fieldname": "amount_eligible_for_commission", "fieldtype":"Currency", "precision":2},
-				{"label": "Incentive Amount", 'width': 150, "fieldname": "total_commission", "fieldtype":"Currency", "precision":2},
+				{"label": "Incentive Amount", 'width': 150, "fieldname": "incentive_amount", "fieldtype":"Currency", "precision":2},
 				{"label": "SI", 'width': 150, "fieldname": "labs_percentage", "fieldtype":"Currency", "precision":2}
 			]
 		else:
@@ -85,10 +85,10 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 
 	if report_type == "By MD":
 
-		data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, ref_practitioner, patient_name, total, discount_amount, net_total, 
-								total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
-								from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
-								and total_commission > 0 order by ref_practitioner asc, sales_invoice asc, posting_date asc, patient_name asc""",
+		data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.ref_practitioner, si.patient_name, si.total, si.discount_amount, si.net_total, 
+								si.total_commission, pf.amount as incentive_amount from `tabSales Invoice` si join `tabPF and Incentive Item` pf on si.name = pf.parent
+					   			where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner like %s and pf.item_code = "INCENTIVE"
+								and si.total_commission > 0 order by si.ref_practitioner asc, sales_invoice asc, si.posting_date asc, si.patient_name asc""",
 								(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
 		for row in data:
 			row['labs_percentage'] = float(row['net_total'])*0.02
