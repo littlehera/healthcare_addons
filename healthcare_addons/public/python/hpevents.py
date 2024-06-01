@@ -20,4 +20,4 @@ def create_sales_partner(doc, method):
             doc.custom_sales_partner = sp_doc.name
 
 def find_sales_partner(sp_name):
-    return frappe.db.get_value("Sales Partner",sp_name,"partner_name")
+    return frappe.db.get_value("Sales Partner",sp_name,"name")
