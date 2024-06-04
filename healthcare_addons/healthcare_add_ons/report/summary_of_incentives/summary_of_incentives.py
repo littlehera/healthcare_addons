@@ -122,14 +122,15 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 			data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_external_referrer, patient_name, total, discount_amount, net_total, 
 									total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
 									from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
-									and name in (SELECT parent from `tabSales Invoice Item` where item_code like%s)""",
+									and name in (SELECT parent from `tabSales Invoice Item` where item_code like%s) order by custom_external_referrer asc,
+									sales_invoice asc""",
 									(from_date, to_date, '%'+referred_by+'%', package), as_dict = True)
 			for row in data:
 				row['total_commission'] = float(row['total_commission']) + float(get_incentive_amount(package))
 				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(package))
 				row['item_code'] = package
 				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
-		data = sorted(data, key=lambda k: k['custom_external_referrer'], reverse=False)
+		#data = sorted(data, key=lambda k: k['custom_external_referrer'], reverse=False)
 	return data
 
 def get_practitioner_name(ref_practitioner):
@@ -174,7 +175,7 @@ def insert_subtotals(data, key_name):
 			prev_key_value = row[key_name]
 		
 		new_data.append(row)
-		if prev_si == row['sales_invoice'] and key_name =="custom_external_referrer":
+		if prev_si == row['sales_invoice'] and key_name !="custom_practitioner_name":
 			discount_amount += float(row['discount_amount'])
 			total_commission += float(row['total_commission'])
 		else:			
@@ -184,6 +185,7 @@ def insert_subtotals(data, key_name):
 			total_commission += float(row['total_commission'])
 			if key_name == "custom_practitioner_name":
 						total_labs_perc += float(row['labs_percentage'])
+		prev_si = row['sales_invoice']
 	
 	new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount, 
 				  "labs_percentage":total_labs_perc, "net_total":net_total, "total_commission":total_commission})
@@ -195,8 +197,9 @@ def insert_total_row(data, key_value, report_type):
 	net_total = 0
 	total_commission = 0 
 	total_labs_perc = 0
+
 	for row in data:
-		if 'Total for' in row[key_value]:
+		if 'Total for' not in row[key_value]:
 			continue
 		else:
 			total += float(row['total'])
@@ -206,25 +209,27 @@ def insert_total_row(data, key_value, report_type):
 			if report_type == "By MD":
 				total_labs_perc += float(row['labs_percentage'])
 
-
 	data.append({key_value:"TOTAL", "total":total,"discount_amount":discount_amount, "labs_percentage":total_labs_perc,
 					 			"net_total":net_total, "total_commission":total_commission})
 	return data
 
 def get_totals_only(data, key_name):
-	
 	new_data = []
+
 	total = 0
 	discount_amount = 0
 	net_total = 0
 	total_commission = 0
 	total_labs_perc = 0
+	prev_si = ""
+
+	data = sorted(data, key=lambda k: k[key_name], reverse=False)
 
 	prev_key_value = None
 	for row in data:
 		if (prev_key_value!= row[key_name]) or (prev_key_value is None):
 			if (prev_key_value is not None):
-				new_data.append({key_name:str(prev_key_value), "total":total,"discount_amount":discount_amount,
+				new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount,
 					 			"net_total":net_total, "total_commission":total_commission, "labs_percentage":total_labs_perc})
 				total = 0
 				discount_amount = 0
@@ -234,14 +239,20 @@ def get_totals_only(data, key_name):
 					total_labs_perc = 0
 			prev_key_value = row[key_name]
 		
-		total += float(row['total'])
-		discount_amount += float(row['discount_amount'])
-		net_total += float(row['net_total'])
-		total_commission += float(row['total_commission'])
-		if key_name == "custom_practitioner_name":
-					total_labs_perc += float(row['labs_percentage'])
+	#	new_data.append(row)
+		if prev_si == row['sales_invoice'] and key_name !="custom_practitioner_name":
+			discount_amount += float(row['discount_amount'])
+			total_commission += float(row['total_commission'])
+		else:			
+			total += float(row['total'])
+			discount_amount += float(row['discount_amount'])
+			net_total += float(row['net_total'])
+			total_commission += float(row['total_commission'])
+			if key_name == "custom_practitioner_name":
+						total_labs_perc += float(row['labs_percentage'])
+		prev_si = row['sales_invoice']
 	
-	new_data.append({key_name:str(prev_key_value), "total":total,"discount_amount":discount_amount, 
+	new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount, 
 				  "labs_percentage":total_labs_perc, "net_total":net_total, "total_commission":total_commission})
 	return new_data
 
