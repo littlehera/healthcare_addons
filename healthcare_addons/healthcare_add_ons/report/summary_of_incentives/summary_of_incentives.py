@@ -155,6 +155,7 @@ def insert_subtotals(data, key_name):
 	net_total = 0
 	total_commission = 0
 	total_labs_perc = 0
+	prev_si = ""
 
 	data = sorted(data, key=lambda k: k[key_name], reverse=False)
 
@@ -173,12 +174,16 @@ def insert_subtotals(data, key_name):
 			prev_key_value = row[key_name]
 		
 		new_data.append(row)
-		total += float(row['total'])
-		discount_amount += float(row['discount_amount'])
-		net_total += float(row['net_total'])
-		total_commission += float(row['total_commission'])
-		if key_name == "custom_practitioner_name":
-					total_labs_perc += float(row['labs_percentage'])
+		if prev_si == row['sales_invoice'] and key_name =="custom_external_referrer":
+			discount_amount += float(row['discount_amount'])
+			total_commission += float(row['total_commission'])
+		else:			
+			total += float(row['total'])
+			discount_amount += float(row['discount_amount'])
+			net_total += float(row['net_total'])
+			total_commission += float(row['total_commission'])
+			if key_name == "custom_practitioner_name":
+						total_labs_perc += float(row['labs_percentage'])
 	
 	new_data.append({key_name:"Total for "+str(prev_key_value), "total":total,"discount_amount":discount_amount, 
 				  "labs_percentage":total_labs_perc, "net_total":net_total, "total_commission":total_commission})
