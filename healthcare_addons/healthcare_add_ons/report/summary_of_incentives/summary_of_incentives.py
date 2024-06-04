@@ -129,7 +129,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(package))
 				row['item_code'] = package
 				row['custom_external_referrer'] = row['custom_external_referrer'] if row['custom_external_referrer'] is not None else ""
-
+		data = sorted(data, key=lambda k: k['custom_external_referrer'], reverse=False)
 	return data
 
 def get_practitioner_name(ref_practitioner):
