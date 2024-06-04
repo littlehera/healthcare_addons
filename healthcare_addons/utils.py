@@ -1,4 +1,4 @@
-# import frappe, uuid
+import frappe, uuid
 # from healthcare_addons.public.python.sievents import cancel_si, pull_item_pf_incentives
 
 # def fix_si():
@@ -53,3 +53,20 @@
 #         return item_price[0][0] if item_price[0][0] is not None else 0
 #     else:
 #         return 0
+
+def obrero_fix():
+    si_list = frappe.db.sql("""SELECT name, ref_practitioner, custom_practitioner_name from `tabSales Invoice` where ref_practitioner like %s and
+                            custom_practitioner_name like %s and docstatus = 1""",('%'+'OBRERO'+'%','%'+'ZAYNAB'+'%'))
+    for si in si_list:
+        print(si[0], si[1], si[2])
+        #HLC-PRAC-2024-00018
+        frappe.db.sql("""UPDATE `tabSales Invoice` set ref_practitioner = 'HLC-PRAC-2024-00018' where name = %s""",si[0])
+        frappe.db.sql("""UPDATE `tabPF and Incentive Item` set doctor = 'HLC-PRAC-2024-00018' where item_code = 'INCENTIVE' and parent = %s""",si[0])
+        frappe.db.commit()
+    
+    labs_list = frappe.db.sql("""SELECT name, practitioner, practitioner_name from `tabLab Test` where practitioner like %s and
+                            practitioner_name like %s and docstatus = 1""",('%'+'OBRERO'+'%','%'+'ZAYNAB'+'%'))
+    for lab in labs_list:
+        print(lab[0], lab[1], lab[2])
+        frappe.db.sql("""UPDATE `tabLab Test` set practitioner = 'HLC-PRAC-2024-00018' where name = %s""",lab[0])
+        frappe.db.commit()
