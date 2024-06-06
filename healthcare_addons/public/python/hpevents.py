@@ -4,6 +4,8 @@
 import frappe
 
 def create_sales_partner(doc, method):
+    if practitioner_name_exists(doc.practitioner_name, doc.name):
+            frappe.throw("Healthcare Practitioner already Exists!")
     if doc.custom_type == "Doctor (MD)":
         if find_sales_partner(doc.practitioner_name):
             doc.custom_sales_partner = find_sales_partner(doc.practitioner_name)
@@ -21,3 +23,14 @@ def create_sales_partner(doc, method):
 
 def find_sales_partner(sp_name):
     return frappe.db.get_value("Sales Partner",sp_name,"name")
+
+def practitioner_name_exists(dr_name, dr_id):
+    count_names = frappe.db.sql("""SELECT COUNT(*) from `tabHealthcare Practitioner` where practitioner_name = %s and name != %s""",
+                                (dr_name, dr_id))
+    if len(count_names)>0:
+        if count_names[0][0] > 0:
+            return True
+        else:
+            return False
+    else:
+        return False
