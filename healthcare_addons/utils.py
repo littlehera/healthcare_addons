@@ -24,12 +24,12 @@ import frappe, uuid
 #                           %s,%s,%s,%s,%s,NULL,%s,%s,%s,%s)""",(name,idx,item_code, amount, pf_type, doctor,amount, parent, parentfield, parenttype))
 #             frappe.db.commit()        
 
-# def get_idx(si):
-#     current_id = frappe.db.sql("""SELECT MAX(idx) from `tabPF and Incentive Item` where parent = %s""",si)
-#     if current_id[0][0] is None:
-#         return 1
-#     else:
-#         return (current_id[0][0]+1)
+def get_idx(si):
+    current_id = frappe.db.sql("""SELECT MAX(idx) from `tabPF and Incentive Item` where parent = %s""",si)
+    if current_id[0][0] is None:
+        return 1
+    else:
+        return (current_id[0][0]+1)
 
 # def get_incentive_amount(item_code,si):
 #     doc = frappe.get_doc("Sales Invoice", si)
@@ -54,19 +54,37 @@ import frappe, uuid
 #     else:
 #         return 0
 
-def obrero_fix():
-    si_list = frappe.db.sql("""SELECT name, ref_practitioner, custom_practitioner_name from `tabSales Invoice` where ref_practitioner like %s and
-                            custom_practitioner_name like %s and docstatus = 1""",('%'+'OBRERO'+'%','%'+'ZAYNAB'+'%'))
-    for si in si_list:
-        print(si[0], si[1], si[2])
-        #HLC-PRAC-2024-00018
-        frappe.db.sql("""UPDATE `tabSales Invoice` set ref_practitioner = 'HLC-PRAC-2024-00018' where name = %s""",si[0])
-        frappe.db.sql("""UPDATE `tabPF and Incentive Item` set doctor = 'HLC-PRAC-2024-00018' where item_code = 'INCENTIVE' and parent = %s""",si[0])
+def referral_with_hmo():
+    sis = frappe.db.sql("""SELECT name, custom_source, custom_hmo, ref_practitioner, net_total from `tabSales Invoice` where custom_source = 'HMO' and posting_date >'2024-03-15'
+                            and docstatus =1""")
+    for row in sis:
+        print(row[0], row[1], row[2], row[3], row[4])
+
+        amount= float(row[4]) * 0.05
+        name = uuid.uuid4().hex
+        parent = row[0]
+        doctor = row[3]
+        pf_type = "Incentive"
+        custom_source = "Doctor's Referral- HMO"
+        item_code = "INCENTIVE"
+        parentfield = "custom_pf_and_incentives"
+        parenttype = "Sales Invoice"
+        idx =  get_idx(parent)
+        sales_partner = get_sales_partner(doctor)
+
+        frappe.db.sql("""UPDATE `tabSales Invoice` set custom_source = %s, sales_partner =%s, amount_eligible_for_commission = net_total,
+                        commission_rate = 5, total_commission = (net_total * 0.05) where name = %s""",(custom_source, sales_partner, parent))
+
+        if count_incentive_item(parent,doctor) == 0:
+            print("INSERT:", item_code, parent, doctor, idx, amount, name)
+            frappe.db.sql("""INSERT INTO `tabPF and Incentive Item`(name,creation,modified,modified_by,owner,docstatus,idx,item_code,amount,pf_type,
+                            doctor,external_referrer,amount_to_turnover,parent,parentfield,parenttype) VALUES(%s,NOW(),NOW(),'Administrator','Administrator',1,
+                            %s,%s,%s,%s,%s,NULL,%s,%s,%s,%s)""",(name,idx,item_code, amount, pf_type, doctor,amount, parent, parentfield, parenttype))
         frappe.db.commit()
-    
-    labs_list = frappe.db.sql("""SELECT name, practitioner, practitioner_name from `tabLab Test` where practitioner like %s and
-                            practitioner_name like %s and docstatus = 1""",('%'+'OBRERO'+'%','%'+'ZAYNAB'+'%'))
-    for lab in labs_list:
-        print(lab[0], lab[1], lab[2])
-        frappe.db.sql("""UPDATE `tabLab Test` set practitioner = 'HLC-PRAC-2024-00018' where name = %s""",lab[0])
-        frappe.db.commit()
+
+def get_sales_partner(doctor):
+    return frappe.db.get_value("Healthcare Practitioner",doctor,"custom_sales_partner")
+
+def count_incentive_item(parent, doctor):
+    return frappe.db.sql("""SELECT COUNT(*) from `tabPF and Incentive Item` where parent = %s and item_code = 'INCENTIVE' and doctor = %s""",
+                         (parent, doctor))[0][0]
