@@ -79,9 +79,9 @@ def get_items(si, report_type):
 					   			and parent = %s""",(item_group, si))
 	for i,row in enumerate(rows):
 		amount += row[1]
-		items+= row[0]
+		items += row[0]
 		if len(rows)!= i+1:
-			items+=', '
+			items += ', '
 	return items, amount
 
 def get_ref_no(si):
@@ -102,7 +102,7 @@ def get_card_no(si):
 
 def get_doctor(si):
 	doctor = ""
-	rows = frappe.db.sql("""SELECT doctor from `tabPF and Incentive Item` where parent = %s and item_code = 'CONSULTATION'""",si)
+	rows = frappe.db.sql("""SELECT doctor from `tabPF and Incentive Item` where parent = %s and item_code like %s""",(si,'%'+'Consultation'+'%'))
 	for row in rows:
 		doctor = frappe.db.get_value("Healthcare Practitioner",row[0],"practitioner_name")+", MD"
 	return doctor
