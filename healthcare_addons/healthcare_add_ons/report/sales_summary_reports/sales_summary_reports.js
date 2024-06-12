@@ -40,7 +40,7 @@ frappe.query_reports["Sales Summary Reports"] = {
             "fieldname": "custom_source",
             "label": __("Source"),
             "fieldtype": "Select",
-            "options": ["","Doctor's Referral- Regular","Doctor's Referral- SC/PWD","Doctor's Referral- MD","Doctor's Referral- HMO","Walk-in-Regular","Walk-in - SC/PWD","HMO","Company","Package","Promo","Employee Benefit"],
+            "options": ["","Doctor's Referral- Regular","Doctor's Referral- SC/PWD","Doctor's Referral- MD","Walk-in-Regular","Walk-in - SC/PWD","HMO","Company","Package","Promo","Employee Benefit"],
             "reqd": 0
         },
         {
