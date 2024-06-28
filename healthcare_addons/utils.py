@@ -55,7 +55,7 @@ def get_idx(si):
 #         return 0
 
 def referral_with_hmo():
-    sis = frappe.db.sql("""SELECT name, custom_source, custom_hmo, ref_practitioner, net_total from `tabSales Invoice` where custom_source = 'HMO' and posting_date >'2024-03-15'
+    sis = frappe.db.sql("""SELECT name, custom_source, custom_hmo, ref_practitioner, net_total from `tabSales Invoice` where custom_source = 'HMO' and posting_date >='2024-06-01'
                             and docstatus =1""")
     for row in sis:
         print(row[0], row[1], row[2], row[3], row[4])
