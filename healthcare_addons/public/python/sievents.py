@@ -130,7 +130,7 @@ def pull_item_pf_incentives(doc):
             if pf_perc > 0:
                 # print("PF PERC")
                 # Get item price for the package item where price list = si price list.                
-                rate = get_item_price(item.parent_item,doc.selling_price_list)
+                rate = get_item_price(item.item_code,doc.selling_price_list)
                 amount = (pf_perc/100)*rate
                 amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
                 pf_type = "Reading PF"
