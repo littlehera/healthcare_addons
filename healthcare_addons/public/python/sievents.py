@@ -62,11 +62,13 @@ def pull_item_pf_incentives(doc):
         amount = 0
         amount_to_turnover = 0
         if is_package(item.item_code):
-            amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_incentive_amount")
+            bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
+            amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_incentive_amount")
             pf_type ="Incentive"
             amount_to_turnover = amount
         elif is_promo(item.item_code):
-            amount = frappe.db.get_value("Product Bundle", item.item_code, "custom_md_pf")
+            bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
+            amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_md_pf")
             pf_type = "MD Consultation PF"
             amount_to_turnover = amount
             doc.amount_eligible_for_commission = doc.grand_total
