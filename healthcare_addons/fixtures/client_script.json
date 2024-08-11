@@ -2,6 +2,17 @@
  {
   "docstatus": 0,
   "doctype": "Client Script",
+  "dt": "Patient",
+  "enabled": 1,
+  "modified": "2024-08-11 18:47:27.253327",
+  "module": "Healthcare Add-ons",
+  "name": "Patient Script",
+  "script": "frappe.ui.form.on('Patient', {\n\trefresh(frm) {\n\t\t// your code here\n\t}\n})\n\nfrappe.ui.form.on('Patient', {\n    refresh: function (frm) {\n        frm.add_custom_button(__('Update Patient Details'), function () {\n        \tvar progress_bar = '<span id=\"progress_bar_text\">Updating...</span><div class=\"progress\">' +\n        \t\t'<div id = \"progress_bar\" class=\"progress-bar progress-bar-info progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"01\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width:100%\">' +\n        \t\t'</div></div>';\n        \tvar progress = new frappe.ui.Dialog({\n        \t\ttitle: \"Loading...\",\n        \t\tfields: [\n        \t\t\t{\"fieldtype\": \"HTML\", \"fieldname\": \"progress\"}]\n        \t});\n        \tprogress.fields_dict.progress.$wrapper.html(progress_bar);\n        \tprogress.show()\n            frappe.call({\n                'method': \"healthcare_addons.public.python.patevents.update_patient_details\",\n                'args':{\n                    doc: frm.doc\n                },\n                'callback': function(d){\n                    if(d.message){\n                        progress.hide();\n                        frappe.msgprint(d.message);\n                    }\n                }   \n            });\n        });\n    }\n});\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
   "dt": "Sales Invoice",
   "enabled": 1,
   "modified": "2024-06-28 17:28:42.852893",
