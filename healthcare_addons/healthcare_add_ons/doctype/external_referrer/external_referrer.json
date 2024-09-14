@@ -32,7 +32,7 @@
    "fieldname": "type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Nurse\nMidwife",
+   "options": "Doctor\nNurse\nMidwife",
    "reqd": 1
   },
   {
@@ -44,7 +44,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-10-08 19:48:04.727977",
+ "modified": "2024-09-14 11:31:31.717496",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "External Referrer",
