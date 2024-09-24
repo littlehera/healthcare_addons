@@ -54,6 +54,7 @@ def validate_payments(doc):
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
+    less_pfs = 0
 
     ### FOR SI ITEMS
     for item in doc.items:
@@ -66,6 +67,8 @@ def pull_item_pf_incentives(doc):
             amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_incentive_amount")
             pf_type ="Incentive"
             amount_to_turnover = amount
+            less_pfs += item.amount
+
         elif is_promo(item.item_code):
             bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
             amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_md_pf")
@@ -74,6 +77,8 @@ def pull_item_pf_incentives(doc):
             doc.amount_eligible_for_commission = doc.grand_total
             doc.amount_eligible_for_commission -= amount
             doc.total_commission = doc.amount_eligible_for_commission * (doc.commission_rate/100)
+            #less_pfs += item.amount
+
         else:
             item_group = frappe.db.get_value("Item", item.item_code, "item_group")
             if item_group == "Laboratory":
@@ -160,24 +165,29 @@ def pull_item_pf_incentives(doc):
     
        ### For Sales Partner/Health Practitioner Incentives
     if doc.custom_source in ["Doctor's Referral- MD","Doctor's Referral- Regular","Doctor's Referral- SC/PWD", "Promo", "HMO"]:
-        amount = doc.total_commission
-        pf_type = "Incentive"
-        item_code = "INCENTIVE"
-        doctor = doc.ref_practitioner
-        amount_to_turnover = amount
+        if check_if_consultation(doc):
+            pass
+        else:
+            doc.amount_eligible_for_commission -= less_pfs
+            doc.total_commission = doc.amount_eligible_for_commission * (doc.commission_rate/100)
+            amount = doc.total_commission
+            pf_type = "Incentive"
+            item_code = "INCENTIVE"
+            doctor = doc.ref_practitioner
+            amount_to_turnover = amount
 
-        if amount > 0:
-            total_pfs += amount
-            pf_row = {
-                "item_code":item_code,
-                "amount": amount,
-                "doctor": doctor,
-                "pf_type": pf_type,
-                "amount_to_turnover":amount_to_turnover
-                }
-            
-            if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
-                pf_row = doc.append("custom_pf_and_incentives",pf_row)
+            if amount > 0:
+                total_pfs += amount
+                pf_row = {
+                    "item_code":item_code,
+                    "amount": amount,
+                    "doctor": doctor,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    }
+                
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
 
     if "Package" in doc.custom_source:
         total_reg_labs = get_total_of_regular_labs(doc.items)
@@ -327,3 +337,15 @@ def get_or_match(or_no, si):
         return count_or[0][0]
     else:
         return 0
+
+def check_if_consultation(si):
+    items = si.items
+    if len(items) == 1:
+        item_code = items[0].item_code
+        print(item_code)
+        if "consultation" in str(item_code).lower():
+            return True
+        else:
+            return False
+    else:
+        return False
