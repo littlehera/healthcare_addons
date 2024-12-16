@@ -37,6 +37,14 @@ frappe.query_reports["Summary of Incentives"] = {
             "reqd": 0
 
         },
+        {
+            "fieldname": "external_referrer",
+            "label": __("External Referrer"),
+            "fieldtype": "Link",
+            "options": "External Referrer",
+            "reqd": 0
+
+        },
 		{
             "fieldname": "package",
             "label": __("Package"),

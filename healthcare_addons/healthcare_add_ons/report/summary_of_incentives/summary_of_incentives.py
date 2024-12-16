@@ -11,11 +11,12 @@ def execute(filters=None):
 	to_date = filters.get("to_date")
 	report_type = filters.get("report_type")
 	referred_by = filters.get("referred_by") if filters.get("referred_by") is not None else ""
+	external_referrer = filters.get("external_referrer") if filters.get("external_referrer") is not None else ""
 	package = filters.get("package") if filters.get("package") is not None else ""
 	totals_only = filters.get("totals_only")
 
 	columns = get_columns(report_type,totals_only)
-	data = get_data(from_date, to_date, report_type, referred_by, package,totals_only)
+	data = get_data(from_date, to_date, report_type, referred_by, external_referrer, package, totals_only)
 
 	key_ = 'custom_practitioner_name' if report_type == "By MD" else 'custom_external_referrer'
 
@@ -80,7 +81,7 @@ def get_columns(report_type, totals_only):
 			]
 	return columns
 
-def get_data(from_date, to_date, report_type, referred_by = None, package = None, totals_only=None):
+def get_data(from_date, to_date, report_type, referred_by = None, external_referrer = None, package = None, totals_only=None):
 	data = []
 
 	if report_type == "By MD":
@@ -108,11 +109,11 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, itm.external_referrer, si.patient_name, si.total, si.discount_amount, 
 									si.net_total, si.total_commission, (si.net_total) as net_sales, si.amount_eligible_for_commission, itm.item_code,
 									itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name 
-									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner like %s
+									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.custom_external_referrer like %s
 									and (itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package') or (itm.item_code ="REFERRAL"))
 									order by si.custom_external_referrer asc, si.posting_date asc, si.patient_name asc, itm.item_code asc, si.total asc,
 									si.amount_eligible_for_commission asc""",
-									(from_date, to_date, '%'+referred_by+'%'), as_dict = True)
+									(from_date, to_date, '%'+external_referrer+'%'), as_dict = True)
 			for row in data:
 				#row['total_commission'] = float(row['total_commission']) + float(row['amount_to_turnover'])
 				row['total_commission'] = float(row['amount_to_turnover'])
@@ -121,10 +122,10 @@ def get_data(from_date, to_date, report_type, referred_by = None, package = None
 		else:
 			data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_external_referrer, patient_name, total, discount_amount, net_total, 
 									total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
-									from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and ref_practitioner like %s
+									from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and custom_external_referrer like %s
 									and name in (SELECT parent from `tabSales Invoice Item` where item_code like%s) order by custom_external_referrer asc,
 									sales_invoice asc""",
-									(from_date, to_date, '%'+referred_by+'%', package), as_dict = True)
+									(from_date, to_date, '%'+external_referrer+'%', package), as_dict = True)
 			for row in data:
 				row['total_commission'] = float(row['total_commission']) + float(get_incentive_amount(package))
 				row['net_sales'] = float(row['net_sales']) - float(get_incentive_amount(package))
