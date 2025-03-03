@@ -13,6 +13,7 @@ def on_save(doc, method):
     doc.patient_name = patient_name
  
     doc.patient_id = lastname[0]+firstname[0]+str(birthdate.month).zfill(2)+str(birthdate.day).zfill(2)+str(birthdate.year)
+    doc.uid = doc.patient_id
     try:
         if doc.__islocal:
             doc.name = doc.patient_id
