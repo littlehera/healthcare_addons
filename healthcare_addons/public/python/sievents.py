@@ -58,6 +58,7 @@ def pull_item_pf_incentives(doc):
 
     ### FOR SI ITEMS
     for item in doc.items:
+        utz = is_utz(item.item_code)
         doctor = None
         pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
         amount = 0
@@ -84,8 +85,7 @@ def pull_item_pf_incentives(doc):
             if item_group == "Laboratory":
                 pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
                 # print(item.item_code,pf_perc,"###################")
-                if pf_perc > 0:
-                    # print("PF PERC")
+                if utz:
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount
                     amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
@@ -93,11 +93,20 @@ def pull_item_pf_incentives(doc):
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
-                    doctor = item.custom_doctor
-                    amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
-                    pf_type = "Reading PF"
-                    amount_to_turnover = amount
+                    if pf_perc > 0:
+                        # print("PF PERC")
+                        doctor = item.custom_doctor
+                        amount = (pf_perc/100)*item.amount
+                        amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                        pf_type = "Reading PF"
+                        amount_to_turnover = amount
+                        print(amount_to_turnover,"AMOUNT TO TURNOVER")
+                    else:
+                        doctor = item.custom_doctor
+                        amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                        amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                        pf_type = "Reading PF"
+                        amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
@@ -105,8 +114,29 @@ def pull_item_pf_incentives(doc):
                     amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount
                     amount_to_turnover = amount
 
-        if amount > 0:
+        if amount > 0 and not utz:
             total_pfs += amount
+            if doctor is not None:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "doctor": doctor,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+            else:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+
+        if amount == 0 and utz:
             if doctor is not None:
                 pf_row = {
                     "item_code":item.item_code,
@@ -237,6 +267,13 @@ def is_promo(item_code):
     if count_promo[0][0]>0:
         is_promo = True
     return is_promo
+
+def is_utz(item_code):
+    is_utz = False
+    count_lab_test = frappe.db.sql("""SELECT COUNT(*) from `tabLab Test Template` where item = %s""",(item_code))
+    if count_lab_test[0][0]>0:
+        is_utz = True
+    return is_utz
 
 def check_in_pf_items(row, items, doctor = None):
     is_match = False

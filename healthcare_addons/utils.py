@@ -1,28 +1,29 @@
 import frappe, uuid
 # from healthcare_addons.public.python.sievents import cancel_si, pull_item_pf_incentives
 
-# def fix_si():
-#     si_list = frappe.db.sql("""select itm.item_code, itm.parent, test.patient_name, test.custom_radiologist from 
-#                             `tabSales Invoice Item` itm left join `tabLab Test` test on test.custom_sales_invoice = itm.parent
-#                             where itm.item_code like '%UTZ%' and itm.docstatus = 1 and itm.parent not in
-#                             (select parent from `tabPF and Incentive Item` where item_code like '%UTZ%')""", as_dict = True)
+def fix_si():
+    si_list = frappe.db.sql("""select itm.item_code, itm.parent from 
+                            `tabSales Invoice Item` itm where itm.item_code like '%NO PF%' and itm.docstatus = 1 and itm.parent not in
+                            (select parent from `tabPF and Incentive Item` where item_code like '%NO PF%')""", as_dict = True)
     
-#     for si in si_list:
-#         name = uuid.uuid4().hex
-#         pf_type = "Reading PF"
-#         item_code = si.item_code
-#         parent = si.parent
-#         parentfield = "custom_pf_and_incentives"
-#         parenttype = "Sales Invoice"
-#         doctor = si.custom_radiologist
-#         idx =  get_idx(parent)
-#         amount = get_incentive_amount(item_code, parent)
-#         if doctor is not None:
-#             print("INSERT:", item_code, parent, doctor, idx, amount, name)
-#             frappe.db.sql("""INSERT INTO `tabPF and Incentive Item`(name,creation,modified,modified_by,owner,docstatus,idx,item_code,amount,pf_type,
-#                           doctor,external_referrer,amount_to_turnover,parent,parentfield,parenttype) VALUES(%s,NOW(),NOW(),'Administrator','Administrator',1,
-#                           %s,%s,%s,%s,%s,NULL,%s,%s,%s,%s)""",(name,idx,item_code, amount, pf_type, doctor,amount, parent, parentfield, parenttype))
-#             frappe.db.commit()        
+    for si in si_list:
+        name = uuid.uuid4().hex
+        pf_type = "Reading PF"
+        item_code = si.item_code
+        parent = si.parent
+        parentfield = "custom_pf_and_incentives"
+        parenttype = "Sales Invoice"
+        doctor = get_radiologist(si.parent)
+        idx =  get_idx(parent)
+        amount = 0
+
+        print(name, pf_type, item_code, idx, doctor, amount)
+        if doctor is not None:
+            print("INSERT:", item_code, parent, doctor, idx, amount, name)
+            frappe.db.sql("""INSERT INTO `tabPF and Incentive Item`(name,creation,modified,modified_by,owner,docstatus,idx,item_code,amount,pf_type,
+                          doctor,external_referrer,amount_to_turnover,parent,parentfield,parenttype) VALUES(%s,NOW(),NOW(),'Administrator','Administrator',1,
+                          %s,%s,%s,%s,%s,NULL,%s,%s,%s,%s)""",(name,idx,item_code, amount, pf_type, doctor,amount, parent, parentfield, parenttype))
+            frappe.db.commit()        
 
 def get_idx(si):
     current_id = frappe.db.sql("""SELECT MAX(idx) from `tabPF and Incentive Item` where parent = %s""",si)
@@ -30,6 +31,14 @@ def get_idx(si):
         return 1
     else:
         return (current_id[0][0]+1)
+
+def get_radiologist(si):
+    rad = ""
+    radiologist = frappe.db.sql("""SELECT custom_radiologist from `tabLab Test` where custom_sales_invoice = %s""",(si))
+    if len(radiologist) > 0:
+        return radiologist[0][0]
+    else:
+        return None
 
 # def get_incentive_amount(item_code,si):
 #     doc = frappe.get_doc("Sales Invoice", si)
