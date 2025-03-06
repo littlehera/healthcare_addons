@@ -136,7 +136,7 @@ def pull_item_pf_incentives(doc):
                 if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
                     pf_row = doc.append("custom_pf_and_incentives",pf_row)
 
-        if amount == 0 and utz:
+        if amount >= 0 and utz:
             if doctor is not None:
                 pf_row = {
                     "item_code":item.item_code,
