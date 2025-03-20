@@ -85,7 +85,8 @@ def pull_item_pf_incentives(doc):
             if item_group == "Laboratory":
                 pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
                 # print(item.item_code,pf_perc,"###################")
-                if utz:
+                if pf_perc > 0:
+                    # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount
                     amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
@@ -93,20 +94,11 @@ def pull_item_pf_incentives(doc):
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
-                    if pf_perc > 0:
-                        # print("PF PERC")
-                        doctor = item.custom_doctor
-                        amount = (pf_perc/100)*item.amount
-                        amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
-                        pf_type = "Reading PF"
-                        amount_to_turnover = amount
-                        print(amount_to_turnover,"AMOUNT TO TURNOVER")
-                    else:
-                        doctor = item.custom_doctor
-                        amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                        amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
-                        pf_type = "Reading PF"
-                        amount_to_turnover = amount
+                    doctor = item.custom_doctor
+                    amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                    pf_type = "Reading PF"
+                    amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
