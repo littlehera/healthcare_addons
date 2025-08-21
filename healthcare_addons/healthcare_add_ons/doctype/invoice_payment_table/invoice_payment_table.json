@@ -9,7 +9,8 @@
   "payment_mode",
   "amount",
   "ref_no",
-  "card_no"
+  "card_no",
+  "company"
  ],
  "fields": [
   {
@@ -39,12 +40,19 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "HMO Card #"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "HMO Company"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-10-08 19:03:34.787492",
+ "modified": "2025-08-21 15:34:48.615861",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Invoice Payment Table",

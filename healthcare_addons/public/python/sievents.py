@@ -342,6 +342,19 @@ def check_hmo_card_no(doc):
 
         if has_card_no == False:
             frappe.throw("HMO Card No. is blank. Please place NONE or enter card number.")
+        check_hmo_company(doc)
+        
+def check_hmo_company(doc):
+    has_card_no = False
+    if "HMO" in doc.custom_source:
+        for row in doc.custom_invoice_payments:
+            if row.payment_mode == "Charge to HMO" and row.company is not None and row.company != "":
+                print("Company #########################")
+                print(row.company)
+                has_card_no = True
+
+        if has_card_no == False:
+            frappe.throw("HMO Company is blank. Please place NONE or enter Company of Patient.")
 
 def get_total_of_regular_labs(items):
     total_reg_labs = 0
