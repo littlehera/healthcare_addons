@@ -33,7 +33,7 @@
  {
   "absolute_value": 0,
   "align_labels_right": 0,
-  "css": ".print-format{\n    width: 10.5cm !important;\n    height: 20cm !important;\n    min-height: 20cm !important;\n    padding: 0.5cm 0.5cm 0.5cm 1.1cm;\n    font-size: 12px !important;\n}\n.invoice-print{}\n.date{\n    width:100%;\n    display: inline-block;\n    margin-top: 2.7cm\n}\n.pdate{\n    float:right;\n}\n.patient-name{\n    margin-left: 1.7cm;\n}\n\n.receipt-body{\n    margin-top:2.6cm;\n    height:7.5cm;\n    min-height:7.5cm;\n    max-height:7.5cm;\n}\n.receipt-body tr{\n    height: 0.5cm;\n    max-height: 0.5cm;\n}\n.receipt-body td{\n    padding:0px!important;\n}\n.receipt-body .item-name{\n    min-width: 5.55cm;\n    max-width: 5.55cm;\n    width: 5.55cm;\n}\n.receipt-body .qty{\n    min-width: 0.8cm;\n    max-width: 0.8cm;\n    width: 0.8cm;\n}\n.receipt-body .rate{\n    min-width: 1.1cm;\n    max-width: 1.1cm;\n    width: 1.1cm; \n}\n.receipt-body .amount{\n    min-width: 1.4cm;\n    max-width: 1.4cm;\n    width: 1.4cm;\n}\n\n.vat-sales{\n    display: block;\n    float: left;\n    width: 4.2cm;\n    min-width: 4.2cm;\n    max-width: 4.2cm;\n}\n.vat-sales div{\n    height:0.5cm;\n    margin-left: 2cm;    \n}\n\n.total-sales{\n    display: block;\n    float: right;\n    width: 4.6cm;\n    min-width: 4.6cm;\n    max-width: 4.6cm;\n}\n\n.total-sales div{\n    margin-left: 2.8cm;\n    height:0.5cm;\n}",
+  "css": ".print-format{\n    width: 10.5cm !important;\n    height: 20cm !important;\n    min-height: 20cm !important;\n    padding: 0.5cm 0.5cm 0.5cm 1.1cm;\n    font-size: 11px !important;\n}\n.invoice-print{}\n.date{\n    width:100%;\n    display: inline-block;\n    margin-top: 2.7cm\n}\n.pdate{\n    float:right;\n}\n.patient-name{\n    margin-left: 1.7cm;\n}\n\n.receipt-body{\n    margin-top:2.6cm;\n    height:7.5cm;\n    min-height:7.5cm;\n    max-height:7.5cm;\n    font-size:8px!important;\n}\n.receipt-body tr{\n    height: 0.25cm;\n    max-height: 0.25cm;\n}\n.receipt-body td{\n    padding:0px!important;\n}\n.receipt-body .item-name{\n    min-width: 5.55cm;\n    max-width: 5.55cm;\n    width: 5.55cm;\n    white-space: nowrap;\n    text-overflow: ellipsis;\n    overflow:hidden;\n}\n.receipt-body .qty{\n    min-width: 0.8cm;\n    max-width: 0.8cm;\n    width: 0.8cm;\n}\n.receipt-body .rate{\n    min-width: 1.1cm;\n    max-width: 1.1cm;\n    width: 1.1cm; \n}\n.receipt-body .amount{\n    min-width: 1.4cm;\n    max-width: 1.4cm;\n    width: 1.4cm;\n}\n\n.vat-sales{\n    display: block;\n    float: left;\n    width: 4.2cm;\n    min-width: 4.2cm;\n    max-width: 4.2cm;\n}\n.vat-sales div{\n    height:0.5cm;\n    margin-left: 2cm;    \n}\n\n.total-sales{\n    display: block;\n    float: right;\n    width: 4.6cm;\n    min-width: 4.6cm;\n    max-width: 4.6cm;\n}\n\n.total-sales div{\n    margin-left: 2.8cm;\n    height:0.5cm;\n}",
   "custom_format": 1,
   "default_print_language": "en",
   "disabled": 0,
@@ -49,7 +49,7 @@
   "margin_left": 15.0,
   "margin_right": 15.0,
   "margin_top": 15.0,
-  "modified": "2025-08-21 15:32:03.418608",
+  "modified": "2025-10-25 15:11:05.672542",
   "module": "Healthcare Add-ons",
   "name": "Premier Lab Service Invoice",
   "page_number": "Hide",

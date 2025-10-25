@@ -1,5 +1,91 @@
 [
  {
+  "add_total_row": 0,
+  "columns": [],
+  "disable_prepared_report": 0,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "No",
+  "javascript": null,
+  "json": "{\"filters\":[[\"Invoice Payment Table\",\"payment_mode\",\"=\",\"Credit Card\",false],[\"Sales Invoice\",\"posting_date\",\"Between\",[\"2025-04-01\",\"2025-04-30\"],false]],\"fields\":[[\"name\",\"Sales Invoice\"],[\"docstatus\",\"Sales Invoice\"],[\"posting_date\",\"Sales Invoice\"],[\"patient_name\",\"Sales Invoice\"],[\"payment_mode\",\"Invoice Payment Table\"],[\"amount\",\"Invoice Payment Table\"],[\"ref_no\",\"Invoice Payment Table\"],[\"net_total\",\"Sales Invoice\"],[\"currency\",\"Sales Invoice\"]],\"order_by\":\"`tabSales Invoice`.`modified` desc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":120,\"posting_date\":120,\"patient_name\":120,\"Invoice Payment Table:payment_mode\":120,\"Invoice Payment Table:amount\":120,\"Invoice Payment Table:ref_no\":120,\"net_total\":120,\"currency\":120},\"group_by\":null}",
+  "letter_head": "Premier Lab Corp Default",
+  "modified": "2025-06-03 16:47:47.664578",
+  "module": "Accounts",
+  "name": "Sales Invoice - Credit Card Payments",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Sales Invoice",
+  "reference_report": null,
+  "report_name": "Sales Invoice - Credit Card Payments",
+  "report_script": null,
+  "report_type": "Report Builder",
+  "roles": [
+   {
+    "parent": "Sales Invoice - Credit Card Payments",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Receptionist"
+   },
+   {
+    "parent": "Sales Invoice - Credit Card Payments",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Sales Invoice - Credit Card Payments",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Laboratory User"
+   }
+  ]
+ },
+ {
+  "add_total_row": 0,
+  "columns": [],
+  "disable_prepared_report": 1,
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Report",
+  "filters": [],
+  "is_standard": "Yes",
+  "javascript": null,
+  "json": null,
+  "letter_head": "Premier Lab Corp Default",
+  "modified": "2025-08-21 15:47:15.236929",
+  "module": "Healthcare Add-ons",
+  "name": "Summary of HMO with Company",
+  "prepared_report": 0,
+  "query": null,
+  "ref_doctype": "Sales Invoice",
+  "reference_report": null,
+  "report_name": "Summary of HMO with Company",
+  "report_script": null,
+  "report_type": "Script Report",
+  "roles": [
+   {
+    "parent": "Summary of HMO with Company",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Receptionist"
+   },
+   {
+    "parent": "Summary of HMO with Company",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Accounts Manager"
+   },
+   {
+    "parent": "Summary of HMO with Company",
+    "parentfield": "roles",
+    "parenttype": "Report",
+    "role": "Laboratory User"
+   }
+  ]
+ },
+ {
   "add_total_row": 1,
   "columns": [],
   "disable_prepared_report": 0,
@@ -8098,7 +8184,7 @@
   "modified": "2023-10-08 17:48:33.505158",
   "module": "Healthcare Add-ons",
   "name": "Summary of Incentives",
-  "prepared_report": 0,
+  "prepared_report": 1,
   "query": null,
   "ref_doctype": "Sales Invoice",
   "reference_report": null,
