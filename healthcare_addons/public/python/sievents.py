@@ -89,21 +89,21 @@ def pull_item_pf_incentives(doc):
                     # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount
-                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
                     pf_type = "MD Consultation PF"
-                    amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount
+                    amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount * (1-(doc.additional_discount_percentage/100))
                     amount_to_turnover = amount
 
         if amount > 0 and not utz:
