@@ -1,7 +1,7 @@
 {
  "add_total_row": 0,
  "columns": [],
- "creation": "2024-08-11 20:45:35.633371",
+ "creation": "2025-09-13 09:33:57.349653",
  "disable_prepared_report": 1,
  "disabled": 0,
  "docstatus": 0,
@@ -9,7 +9,7 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2025-03-21 15:55:39.986692",
+ "modified": "2025-11-12 18:14:47.357556",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Summary of Professional Fees",
