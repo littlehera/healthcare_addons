@@ -10,7 +10,10 @@
  "field_order": [
   "hmo_name",
   "price_list",
-  "contact"
+  "contact",
+  "tradename",
+  "tin",
+  "address"
  ],
  "fields": [
   {
@@ -33,11 +36,29 @@
    "label": "Price List",
    "options": "Price List",
    "reqd": 1
+  },
+  {
+   "fieldname": "tradename",
+   "fieldtype": "Data",
+   "label": "HMO Tradename",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tin",
+   "fieldtype": "Data",
+   "label": "HMO TIN",
+   "reqd": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Data",
+   "label": "HMO Address",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-22 09:58:53.569176",
+ "modified": "2025-11-24 09:21:59.760766",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "HMO",
