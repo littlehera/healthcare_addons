@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "format:HMO-{hmo}-{YY}#####",
+ "autoname": "format:HMO-{hmo}-{YY}{#####}",
  "creation": "2025-11-24 09:21:38.162677",
  "default_view": "List",
  "doctype": "DocType",
@@ -124,7 +124,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-11-24 09:35:16.642499",
+ "modified": "2025-11-25 17:56:54.326303",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "HMO Invoice",
