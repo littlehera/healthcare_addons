@@ -1,11 +1,34 @@
 # Copyright (c) 2023, littlehera and contributors
-# For license information, please see license.txt
 
+
+import decimal
 import frappe
 from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
 
 def validate_si(doc, method):
+
+    net_of_vat = doc.total/1.12
+    vat = doc.total - net_of_vat
+    if ("SC/PWD" in doc.custom_source):
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = 0
+        doc.custom_amount_due = net_of_vat - doc.custom_less_discount
+    else:
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = vat
+        doc.custom_amount_due = net_of_vat - doc.custom_less_discount + vat
+    
+    doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.net_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
+    doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
+    doc.amount_eligible_for_commission = doc.grand_total
+
     make_packing_list(doc)
     check_employee_benefit(doc)
     validate_payments(doc)
@@ -31,7 +54,6 @@ def cancel_si(doc,method):
         frappe.db.commit()
 
 
-
 def check_employee_benefit(doc):
     has_employee_benefit = 0
     payments = doc.custom_invoice_payments
@@ -44,12 +66,13 @@ def check_employee_benefit(doc):
 
 
 def validate_payments(doc):
+
     total = 0
     payments = doc.custom_invoice_payments
     for payment in payments:
         total += payment.amount
     
-    if total != doc.net_total:
+    if total != float(doc.net_total):
         frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE NET TOTAL AMOUNT!")
 
 def pull_item_pf_incentives(doc):
@@ -89,21 +112,21 @@ def pull_item_pf_incentives(doc):
                     # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount
-                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
                     pf_type = "MD Consultation PF"
-                    amount = (item.amount * 0.8) if ("SC/PWD" in doc.custom_source) else item.amount * (1-(doc.additional_discount_percentage/100))
+                    amount = (item.amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else item.amount * (1-(doc.additional_discount_percentage/100))
                     amount_to_turnover = amount
 
         if amount > 0 and not utz:
@@ -392,3 +415,7 @@ def check_if_consultation(si):
             return False
     else:
         return False
+    
+def to_decimal(value, decimal_places):
+    decimal.getcontext().rounding = decimal.ROUND_HALF_UP  # define rounding method
+    return decimal.Decimal(str(float(value))).quantize(decimal.Decimal('1e-{}'.format(decimal_places)))
