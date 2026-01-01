@@ -28,6 +28,7 @@ def validate_si(doc, method):
     doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
     doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
     doc.amount_eligible_for_commission = doc.grand_total
+    doc.base_grand_total = doc.grand_total
 
     make_packing_list(doc)
     check_employee_benefit(doc)
@@ -112,6 +113,7 @@ def pull_item_pf_incentives(doc):
                     # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount
+                    #TODO: VALIDATE if percent pf is less vat for regular (non sc/pwd) transactions 
                     amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
@@ -119,7 +121,8 @@ def pull_item_pf_incentives(doc):
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                    #TODO: VALIDATE if fixed peso reading pf is less vat for regular AND sc/pwd transactions
+                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
@@ -180,6 +183,8 @@ def pull_item_pf_incentives(doc):
             pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
             pf_fixed = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
             
+            #TODO: Identify if to copy formula in top section or retain
+
             if pf_perc > 0:
                 # print("PF PERC")
                 # Get item price for the package item where price list = si price list.                
@@ -243,7 +248,7 @@ def pull_item_pf_incentives(doc):
         #amount_to_turnover = amount
 
         if "SC/PWD" in doc.custom_source:
-            amount = amount * 0.8
+            amount = amount /1.12 * 0.8 #TODO Validate if LESS VAT?
         
         amount_to_turnover = amount
 
