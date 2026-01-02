@@ -190,12 +190,12 @@ def pull_item_pf_incentives(doc):
                 # Get item price for the package item where price list = si price list.                
                 rate = get_item_price(item.item_code,doc.selling_price_list)
                 amount = (pf_perc/100)*rate
-                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                 pf_type = "Reading PF"
             
             elif pf_fixed >0:
                 amount = pf_fixed
-                amount = (amount * 0.8) if ("SC/PWD" in doc.custom_source) else amount
+                amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                 pf_type = "Reading PF"
 
             else:
@@ -248,7 +248,7 @@ def pull_item_pf_incentives(doc):
         #amount_to_turnover = amount
 
         if "SC/PWD" in doc.custom_source:
-            amount = amount /1.12 * 0.8 #TODO Validate if LESS VAT?
+            amount = amount * 0.8
         
         amount_to_turnover = amount
 
