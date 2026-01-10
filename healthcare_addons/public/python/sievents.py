@@ -112,8 +112,7 @@ def pull_item_pf_incentives(doc):
                 if pf_perc > 0:
                     # print("PF PERC")
                     doctor = item.custom_doctor
-                    amount = (pf_perc/100)*item.amount
-                    #TODO: VALIDATE if percent pf is less vat for regular (non sc/pwd) transactions 
+                    amount = (pf_perc/100)*item.amount 
                     amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
@@ -121,8 +120,7 @@ def pull_item_pf_incentives(doc):
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    #TODO: VALIDATE if fixed peso reading pf is less vat for regular AND sc/pwd transactions
-                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
+                    amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
@@ -195,7 +193,7 @@ def pull_item_pf_incentives(doc):
             
             elif pf_fixed >0:
                 amount = pf_fixed
-                amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                 pf_type = "Reading PF"
 
             else:
