@@ -15,13 +15,13 @@ def validate_si(doc, method):
         doc.custom_net_of_vat = net_of_vat
         doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
         doc.custom_add_vat = 0
-        doc.custom_amount_due = net_of_vat - doc.custom_less_discount
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
         doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
         doc.custom_add_vat = vat
-        doc.custom_amount_due = net_of_vat - doc.custom_less_discount + vat
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
     
     doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
     doc.net_total = float(to_decimal(doc.custom_amount_due,2))
