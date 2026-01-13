@@ -96,8 +96,8 @@ def validate_payments(doc):
     for payment in payments:
         total += payment.amount
     
-    if total != float(doc.net_total):
-        frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE NET TOTAL AMOUNT!")
+    if total != float(doc.custom_amount_due):
+        frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE AMOUNT DUE!")
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
