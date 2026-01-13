@@ -38,6 +38,29 @@ def validate_si(doc, method):
     check_or(doc)
 
 def submit_si(doc,method):
+
+    net_of_vat = doc.total/1.12
+    vat = doc.total - net_of_vat
+    if ("SC/PWD" in doc.custom_source):
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = 0
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
+    else:
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = vat
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
+    
+    doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.net_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
+    doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
+    doc.amount_eligible_for_commission = doc.grand_total
+    doc.base_grand_total = doc.grand_total
+
     check_doctor_not_blank(doc)
     create_pe(doc)
     doc.reload()
