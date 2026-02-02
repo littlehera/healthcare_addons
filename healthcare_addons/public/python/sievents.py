@@ -95,8 +95,10 @@ def validate_payments(doc):
     payments = doc.custom_invoice_payments
     for payment in payments:
         total += payment.amount
-    total = to_decimal(total,2)
-    if total != float(doc.custom_amount_due):
+    total = float(to_decimal(total,2))
+    print(total)
+    if total != float(to_decimal(doc.custom_amount_due,2)):
+        print(total,float(to_decimal(doc.custom_amount_due,2)) )
         frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE AMOUNT DUE!")
 
 def pull_item_pf_incentives(doc):
