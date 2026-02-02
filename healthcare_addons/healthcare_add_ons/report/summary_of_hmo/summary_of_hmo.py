@@ -62,8 +62,8 @@ def get_data(from_date, to_date, report_type, hmo):
 		if hmo == "":
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 									from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-									si.docstatus = 1""",
-									(from_date, to_date),as_dict = True)
+									si.docstatus = 1 and si.custom_hmo like %s""",
+									(from_date, to_date, '%'+hmo+'%'),as_dict = True)
 		else:
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 									from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
@@ -72,9 +72,9 @@ def get_data(from_date, to_date, report_type, hmo):
 	else:
 		if hmo == "":
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
-									from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-									si.docstatus = 1""",
-									(from_date, to_date),as_dict = True)
+					   			from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
+					   			si.docstatus = 1 and si.custom_hmo like %s""",
+								(from_date, to_date, '%'+hmo+'%'),as_dict = True)
 		else:
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 					   			from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
