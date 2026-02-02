@@ -15,13 +15,13 @@ def validate_si(doc, method):
         doc.custom_net_of_vat = net_of_vat
         doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
         doc.custom_add_vat = 0
-        doc.custom_amount_due = net_of_vat - doc.custom_less_discount
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
         doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
         doc.custom_add_vat = vat
-        doc.custom_amount_due = net_of_vat - doc.custom_less_discount + vat
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
     
     doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
     doc.net_total = float(to_decimal(doc.custom_amount_due,2))
@@ -38,6 +38,29 @@ def validate_si(doc, method):
     check_or(doc)
 
 def submit_si(doc,method):
+
+    net_of_vat = doc.total/1.12
+    vat = doc.total - net_of_vat
+    if ("SC/PWD" in doc.custom_source):
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = 0
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
+    else:
+        doc.custom_vat_amount = vat
+        doc.custom_net_of_vat = net_of_vat
+        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_add_vat = vat
+        doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
+    
+    doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.net_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
+    doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
+    doc.amount_eligible_for_commission = doc.grand_total
+    doc.base_grand_total = doc.grand_total
+
     check_doctor_not_blank(doc)
     create_pe(doc)
     doc.reload()
@@ -72,9 +95,9 @@ def validate_payments(doc):
     payments = doc.custom_invoice_payments
     for payment in payments:
         total += payment.amount
-    
-    if total != float(doc.net_total):
-        frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE NET TOTAL AMOUNT!")
+    total = to_decimal(total,2)
+    if total != float(doc.custom_amount_due):
+        frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE AMOUNT DUE!")
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
@@ -112,8 +135,7 @@ def pull_item_pf_incentives(doc):
                 if pf_perc > 0:
                     # print("PF PERC")
                     doctor = item.custom_doctor
-                    amount = (pf_perc/100)*item.amount
-                    #TODO: VALIDATE if percent pf is less vat for regular (non sc/pwd) transactions 
+                    amount = (pf_perc/100)*item.amount 
                     amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
@@ -121,8 +143,7 @@ def pull_item_pf_incentives(doc):
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    #TODO: VALIDATE if fixed peso reading pf is less vat for regular AND sc/pwd transactions
-                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
+                    amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
@@ -195,7 +216,7 @@ def pull_item_pf_incentives(doc):
             
             elif pf_fixed >0:
                 amount = pf_fixed
-                amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
                 pf_type = "Reading PF"
 
             else:

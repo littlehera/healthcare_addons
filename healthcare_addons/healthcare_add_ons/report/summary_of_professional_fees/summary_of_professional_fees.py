@@ -74,7 +74,10 @@ def get_practitioner_name(ref_practitioner):
 def get_item_amounts(item_code, parent):
 	rates = frappe.db.sql("""SELECT rate, net_rate from `tabSales Invoice Item` where item_code=%s and parent = %s""",(item_code, parent))
 	if len(rates)>0:
-		return rates[0][0], rates[0][1]
+		if "SC/PWD" in get_source(parent):
+			return rates[0][0], rates[0][1]/1.12
+		else:
+			return rates[0][0], rates[0][1]
 	else:
 		return get_packed_item_amount(item_code, parent)
 	
@@ -170,3 +173,6 @@ def insert_total_row(data, key_value):
 	data.append({"doctor":"TOTAL", "amount":amount,"grand_total": grand_total,
 					"net_total": net_total, "amount_to_turnover":total_turnover_amount})
 	return data
+
+def get_source(si):
+	return frappe.db.get_value("Sales Invoice",si, 'custom_source')
