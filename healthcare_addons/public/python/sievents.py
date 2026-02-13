@@ -7,19 +7,19 @@ from erpnext.stock.doctype.packed_item.packed_item import make_packing_list
 
 
 def validate_si(doc, method):
-
+    special_disc = float(doc.custom_additional_discount) if (doc.custom_additional_discount is not None and doc.custom_additional_discount!="") else 0
     net_of_vat = doc.total/1.12
     vat = doc.total - net_of_vat
     if ("SC/PWD" in doc.custom_source):
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
         doc.custom_add_vat = 0
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
         doc.custom_add_vat = vat
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
     
@@ -38,19 +38,19 @@ def validate_si(doc, method):
     check_or(doc)
 
 def submit_si(doc,method):
-
+    special_disc = float(doc.custom_additional_discount) if (doc.custom_additional_discount is not None and doc.custom_additional_discount!="") else 0
     net_of_vat = doc.total/1.12
     vat = doc.total - net_of_vat
     if ("SC/PWD" in doc.custom_source):
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
         doc.custom_add_vat = 0
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * (doc.additional_discount_percentage/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
         doc.custom_add_vat = vat
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
     
@@ -104,6 +104,7 @@ def validate_payments(doc):
 def pull_item_pf_incentives(doc):
     total_pfs = 0
     less_pfs = 0
+    addtl_disc = float(doc.custom_additional_discount)
 
     ### FOR SI ITEMS
     for item in doc.items:
