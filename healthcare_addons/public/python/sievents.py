@@ -139,21 +139,21 @@ def pull_item_pf_incentives(doc):
                     # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount 
-                    amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                    amount = (amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100)) 
+                    amount = (amount) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
                     pf_type = "MD Consultation PF"
-                    amount = (item.amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else item.amount * (1-(doc.additional_discount_percentage/100))
+                    amount = (item.amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
                     amount_to_turnover = amount
 
         if amount > 0 and not utz:
@@ -214,12 +214,12 @@ def pull_item_pf_incentives(doc):
                 # Get item price for the package item where price list = si price list.                
                 rate = get_item_price(item.item_code,doc.selling_price_list)
                 amount = (pf_perc/100)*rate
-                amount = (amount/1.12) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                amount = (amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
                 pf_type = "Reading PF"
             
             elif pf_fixed >0:
                 amount = pf_fixed
-                amount = (amount) * 0.8 if ("SC/PWD" in doc.custom_source) else amount * (1-(doc.additional_discount_percentage/100))
+                amount = (amount) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
                 pf_type = "Reading PF"
 
             else:
