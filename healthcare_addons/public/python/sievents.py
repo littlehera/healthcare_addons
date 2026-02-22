@@ -13,18 +13,24 @@ def validate_si(doc, method):
     if ("SC/PWD" in doc.custom_source):
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage)/100)
         doc.custom_add_vat = 0
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
+        doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
+        doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
+        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage)/100)
         doc.custom_add_vat = vat
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
+        doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
+        doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
+        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount + vat
     
-    doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
-    doc.net_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.grand_total = float(to_decimal(doc.custom_final_amount_due,2))
+    doc.net_total = float(to_decimal(doc.custom_final_amount_due,2))
     doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
     doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
     doc.amount_eligible_for_commission = doc.grand_total
@@ -44,18 +50,24 @@ def submit_si(doc,method):
     if ("SC/PWD" in doc.custom_source):
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage)/100)
         doc.custom_add_vat = 0
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
+        doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
+        doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
+        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
-        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage+special_disc)/100)
+        doc.custom_less_discount = net_of_vat * ((doc.additional_discount_percentage)/100)
         doc.custom_add_vat = vat
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
+        doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
+        doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
+        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount + vat
     
-    doc.grand_total = float(to_decimal(doc.custom_amount_due,2))
-    doc.net_total = float(to_decimal(doc.custom_amount_due,2))
+    doc.grand_total = float(to_decimal(doc.custom_final_amount_due,2))
+    doc.net_total = float(to_decimal(doc.custom_final_amount_due,2))
     doc.outstanding_amount = float(to_decimal(doc.custom_amount_due,2))
     doc.discount_amount = float(to_decimal(doc.custom_less_discount,2))
     doc.amount_eligible_for_commission = doc.grand_total
@@ -104,7 +116,7 @@ def validate_payments(doc):
 def pull_item_pf_incentives(doc):
     total_pfs = 0
     less_pfs = 0
-    addtl_disc = float(doc.custom_additional_discount)
+    addtl_disc = (float(doc.custom_additional_discount)/100)
 
     ### FOR SI ITEMS
     for item in doc.items:
@@ -139,21 +151,21 @@ def pull_item_pf_incentives(doc):
                     # print("PF PERC")
                     doctor = item.custom_doctor
                     amount = (pf_perc/100)*item.amount 
-                    amount = (amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
+                    amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
                     print(amount_to_turnover,"AMOUNT TO TURNOVER")
                 else:
                     doctor = item.custom_doctor
                     amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
+                    amount = (amount) * (1-(20/100))* (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
                     pf_type = "Reading PF"
                     amount_to_turnover = amount
             else:
                 if "consultation" in str(item.item_code).lower():
                     doctor = item.custom_doctor
                     pf_type = "MD Consultation PF"
-                    amount = (item.amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
+                    amount = (item.amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
                     amount_to_turnover = amount
 
         if amount > 0 and not utz:
@@ -214,12 +226,12 @@ def pull_item_pf_incentives(doc):
                 # Get item price for the package item where price list = si price list.                
                 rate = get_item_price(item.item_code,doc.selling_price_list)
                 amount = (pf_perc/100)*rate
-                amount = (amount/1.12) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
+                amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
                 pf_type = "Reading PF"
             
             elif pf_fixed >0:
                 amount = pf_fixed
-                amount = (amount) * (1-((20+addtl_disc)/100)) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage+addtl_disc)/100))
+                amount = (amount) * (1-(20/100)) * (1-addtl_disc)if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
                 pf_type = "Reading PF"
 
             else:
@@ -350,6 +362,8 @@ def create_pe(doc):
     doctype = "Payment Entry"
 
     for row in doc.custom_invoice_payments:
+        if float(doc.custom_additional_discount) > 0 and row.payment_mode == 'Employee Benefit':
+            continue
         paid_amount = row.amount
         reference_no = row.ref_no
         mode_of_payment = row.payment_mode
