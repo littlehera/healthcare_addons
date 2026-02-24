@@ -18,7 +18,7 @@ def validate_si(doc, method):
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
         doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
         doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
-        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount
+        doc.custom_final_amount_due = float(to_decimal(net_of_vat - doc.custom_total_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
@@ -27,7 +27,7 @@ def validate_si(doc, method):
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
         doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
         doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
-        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount + vat
+        doc.custom_final_amount_due = float(to_decimal(net_of_vat - doc.custom_total_discount + vat,2))
     
     doc.grand_total = float(to_decimal(doc.custom_final_amount_due,2))
     doc.net_total = float(to_decimal(doc.custom_final_amount_due,2))
@@ -55,7 +55,7 @@ def submit_si(doc,method):
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount,2))
         doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
         doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
-        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount
+        doc.custom_final_amount_due = float(to_decimal(net_of_vat - doc.custom_total_discount,2))
     else:
         doc.custom_vat_amount = vat
         doc.custom_net_of_vat = net_of_vat
@@ -64,7 +64,7 @@ def submit_si(doc,method):
         doc.custom_amount_due = float(to_decimal(net_of_vat - doc.custom_less_discount + vat,2))
         doc.custom_additional_discount_amount = net_of_vat * (1-(doc.additional_discount_percentage/100)) * (special_disc/100) 
         doc.custom_total_discount = doc.custom_additional_discount_amount + doc.custom_less_discount
-        doc.custom_final_amount_due = net_of_vat - doc.custom_total_discount + vat
+        doc.custom_final_amount_due = float(to_decimal(net_of_vat - doc.custom_total_discount + vat,2))
     
     doc.grand_total = float(to_decimal(doc.custom_final_amount_due,2))
     doc.net_total = float(to_decimal(doc.custom_final_amount_due,2))
@@ -364,7 +364,9 @@ def create_pe(doc):
     for row in doc.custom_invoice_payments:
         if float(doc.custom_additional_discount) > 0 and row.payment_mode == 'Employee Benefit':
             continue
-        paid_amount = row.amount
+        paid_amount = float(to_decimal(row.amount,2))
+        print(paid_amount)
+        print("#####################")
         reference_no = row.ref_no
         mode_of_payment = row.payment_mode
 
