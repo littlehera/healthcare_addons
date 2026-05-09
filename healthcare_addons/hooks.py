@@ -230,4 +230,7 @@ doc_events = {
 #	"healthcare_addons.auth.validate"
 # ]
 
-fixtures = ["Custom Field", "Client Script", "Property Setter", "Print Format", "Report"]
+fixtures = ["Custom Field", "Client Script", "Property Setter", "Print Format", "Report",
+            {
+                "doctype": "Web Page"
+            },]
