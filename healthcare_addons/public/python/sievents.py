@@ -39,7 +39,10 @@ def validate_si(doc, method):
     make_packing_list(doc)
     check_employee_benefit(doc)
     validate_payments(doc)
-    pull_item_pf_incentives(doc)
+    if doc.custom_ape_type is not None and doc.custom_ape_type != "":
+        pull_ape_pf(doc)
+    else:
+        pull_item_pf_incentives(doc)
     check_hmo_card_no(doc)
     check_or(doc)
 
@@ -112,6 +115,96 @@ def validate_payments(doc):
     if total != float(to_decimal(doc.custom_amount_due,2)):
         print(total,float(to_decimal(doc.custom_amount_due,2)) )
         frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE AMOUNT DUE!")
+
+def pull_ape_pf(doc): #to recode
+    total_pfs = 0
+    less_pfs = 0
+
+    ### FOR SI ITEMS
+    for item in doc.items:
+        doctor = None
+        pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
+        amount = 0
+        amount_to_turnover = 0
+        if is_ape(item.item_code):
+            continue
+
+        else:
+            item_group = frappe.db.get_value("Item", item.item_code, "item_group")
+            if item_group == "Laboratory":
+                doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
+                reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
+                if doctors_pf > 0:
+                    doctor = item.custom_doctor
+                    amount = doctors_pf
+                    pf_type = "MD Consultation PF"
+                    amount_to_turnover = amount
+                else:
+                    doctor = item.custom_doctor
+                    amount = reading_pf
+                    pf_type = "Reading PF"
+                    amount_to_turnover = amount
+            else:
+                if "consultation" in str(item.item_code).lower():
+                    amount = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
+                    doctor = item.custom_doctor
+                    pf_type = "MD Consultation PF"
+                    amount_to_turnover = amount
+
+        if amount > 0:
+            total_pfs += amount
+            if doctor is not None:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "doctor": doctor,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+            else:
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount_to_turnover
+                    } 
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+
+
+    ##FOR BUNDLE ITEMS
+    if doc.packed_items:
+        for item in doc.packed_items:
+            doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
+            reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
+            
+            if doctors_pf >0:
+                amount = doctors_pf
+                pf_type = "MD Consultation PF"
+            
+            elif reading_pf > 0:
+                amount = reading_pf
+                pf_type = "Reading PF"
+
+            else:
+                amount = 0
+                
+            amount_to_turnover = amount
+            if amount > 0:
+                total_pfs += amount
+                pf_row = {
+                    "item_code":item.item_code,
+                    "amount": amount,
+                    "pf_type": pf_type,
+                    "amount_to_turnover":amount
+                    }
+                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
+                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
+                    frappe.msgprint("Please enter doctor for PF/Incentive row"+str(pf_row.idx)+" | "+pf_row.item_code)
+
+    doc.custom_net_sales = doc.grand_total - total_pfs
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
@@ -325,6 +418,13 @@ def is_promo(item_code):
         is_promo = True
     return is_promo
 
+def is_ape(item_code):
+    is_ape = False
+    count_ape = frappe.db.sql("""SELECT COUNT(*) from `tabProduct Bundle` where custom_type = 'APE' and new_item_code = %s""",item_code)
+    if count_ape[0][0]>0:
+        is_ape = True
+    return is_ape
+
 def is_utz(item_code):
     is_utz = False
     count_lab_test = frappe.db.sql("""SELECT COUNT(*) from `tabLab Test Template` where item = %s""",(item_code))
@@ -464,3 +564,14 @@ def check_if_consultation(si):
 def to_decimal(value, decimal_places):
     decimal.getcontext().rounding = decimal.ROUND_HALF_UP  # define rounding method
     return decimal.Decimal(str(float(value))).quantize(decimal.Decimal('1e-{}'.format(decimal_places)))
+
+@frappe.whitelist()
+def get_items(ape_type, price_list):
+    items = []
+    #frappe.msgprint("get_item_details")
+    item_details = frappe.db.sql("""select ape.item_code, itm.description, itm.item_name, itm.stock_uom, price.price_list_rate from `tabAPE Item` ape 
+                                 join `tabItem` itm on ape.item_code = itm.item_code join `tabItem Price` price on itm.name = price.item_code where 
+                                 ape.parent = %s and price.price_list = %s""", 
+                                 (ape_type,price_list), as_dict = True) 
+    return item_details
+    
