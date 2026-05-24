@@ -4,6 +4,13 @@
 
 frappe.query_reports["Daily Sales Report"] = {
 	"filters": [
+        {
+            "fieldname": "ape_type",
+            "label": __("Invoice Type"),
+            "fieldtype": "Select",
+            "options": ["", "Non-APE Only", "APE Only"],
+            "reqd": 0
+        },
 		{
             "fieldname": "report_type",
             "label": __("Report Type"),
