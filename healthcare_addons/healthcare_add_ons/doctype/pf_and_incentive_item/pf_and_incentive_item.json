@@ -32,7 +32,7 @@
    "fieldname": "pf_type",
    "fieldtype": "Select",
    "label": "Type",
-   "options": "Reading PF\nPromo Consultation PF\nMD Consultation PF\nIncentive"
+   "options": "Reading PF\nPromo Consultation PF\nMD Consultation PF\nIncentive\nScreening PF"
   },
   {
    "fieldname": "doctor",
@@ -59,7 +59,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-11-30 17:20:04.513271",
+ "modified": "2026-05-24 17:15:51.198721",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PF and Incentive Item",

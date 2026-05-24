@@ -39,10 +39,7 @@ def validate_si(doc, method):
     make_packing_list(doc)
     check_employee_benefit(doc)
     validate_payments(doc)
-    if doc.custom_ape_type is not None and doc.custom_ape_type != "":
-        pull_ape_pf(doc)
-    else:
-        pull_item_pf_incentives(doc)
+    pull_item_pf_incentives(doc)
     check_hmo_card_no(doc)
     check_or(doc)
 
@@ -204,7 +201,6 @@ def pull_ape_pf(doc): #to recode
                     pf_row = doc.append("custom_pf_and_incentives",pf_row)
                     frappe.msgprint("Please enter doctor for PF/Incentive row"+str(pf_row.idx)+" | "+pf_row.item_code)
 
-    doc.custom_net_sales = doc.grand_total - total_pfs
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
@@ -213,53 +209,67 @@ def pull_item_pf_incentives(doc):
 
     ### FOR SI ITEMS
     for item in doc.items:
-        utz = is_utz(item.item_code)
+
         doctor = None
-        pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
+        pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive, Screening PF
         amount = 0
         amount_to_turnover = 0
-        if is_package(item.item_code):
-            bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
-            amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_incentive_amount")
-            pf_type ="Incentive"
-            amount_to_turnover = amount
-            less_pfs += item.amount
+        utz = is_utz(item.item_code)
+        
+        ### if is_ape is checked: use ape fixed PFs
+        if item.custom_is_ape == 1:
+            doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
+            reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
 
-        elif is_promo(item.item_code):
-            bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
-            amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_md_pf")
-            pf_type = "MD Consultation PF"
+            doctor = item.custom_doctor
+            amount = doctors_pf if doctors_pf > 0 else reading_pf
+            pf_type = "Screening PF" if doctors_pf > 0 else "Reading PF"
             amount_to_turnover = amount
-            doc.amount_eligible_for_commission = doc.grand_total
-            doc.amount_eligible_for_commission -= amount
-            doc.total_commission = doc.amount_eligible_for_commission * (doc.commission_rate/100)
-            #less_pfs += item.amount
 
+        ### else: use regular computation
         else:
-            item_group = frappe.db.get_value("Item", item.item_code, "item_group")
-            if item_group == "Laboratory":
-                pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
-                # print(item.item_code,pf_perc,"###################")
-                if pf_perc > 0:
-                    # print("PF PERC")
-                    doctor = item.custom_doctor
-                    amount = (pf_perc/100)*item.amount 
-                    amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
-                    pf_type = "Reading PF"
-                    amount_to_turnover = amount
-                    print(amount_to_turnover,"AMOUNT TO TURNOVER")
-                else:
-                    doctor = item.custom_doctor
-                    amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-                    amount = (amount) * (1-(20/100))* (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
-                    pf_type = "Reading PF"
-                    amount_to_turnover = amount
+            if is_package(item.item_code):
+                bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
+                amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_incentive_amount")
+                pf_type ="Incentive"
+                amount_to_turnover = amount
+                less_pfs += item.amount
+
+            elif is_promo(item.item_code):
+                bundle_name = frappe.db.get_value("Product Bundle", {'new_item_code':item.item_code}, "name")
+                amount = frappe.db.get_value("Product Bundle", bundle_name, "custom_md_pf")
+                pf_type = "MD Consultation PF"
+                amount_to_turnover = amount
+                doc.amount_eligible_for_commission = doc.grand_total
+                doc.amount_eligible_for_commission -= amount
+                doc.total_commission = doc.amount_eligible_for_commission * (doc.commission_rate/100)
+                #less_pfs += item.amount
+
             else:
-                if "consultation" in str(item.item_code).lower():
-                    doctor = item.custom_doctor
-                    pf_type = "MD Consultation PF"
-                    amount = (item.amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
-                    amount_to_turnover = amount
+                item_group = frappe.db.get_value("Item", item.item_code, "item_group")
+                if item_group == "Laboratory":
+                    pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
+                    # print(item.item_code,pf_perc,"###################")
+                    if pf_perc > 0:
+                        # print("PF PERC")
+                        doctor = item.custom_doctor
+                        amount = (pf_perc/100)*item.amount 
+                        amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
+                        pf_type = "Reading PF"
+                        amount_to_turnover = amount
+                        print(amount_to_turnover,"AMOUNT TO TURNOVER")
+                    else:
+                        doctor = item.custom_doctor
+                        amount = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+                        amount = (amount) * (1-(20/100))* (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
+                        pf_type = "Reading PF"
+                        amount_to_turnover = amount
+                else:
+                    if "consultation" in str(item.item_code).lower():
+                        doctor = item.custom_doctor
+                        pf_type = "MD Consultation PF"
+                        amount = (item.amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
+                        amount_to_turnover = amount
 
         if amount > 0 and not utz:
             total_pfs += amount
@@ -308,29 +318,42 @@ def pull_item_pf_incentives(doc):
     ##FOR BUNDLE ITEMS
     if doc.packed_items:
         for item in doc.packed_items:
-            
-            pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
-            pf_fixed = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
-            
-            #TODO: Identify if to copy formula in top section or retain
+            doctor = None
+            pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive, Screening PF
+            amount = 0
+            amount_to_turnover = 0
+            ### if PARENT is APE: use ape fixed PFs
+            if is_ape(item.parent_item):
+                doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
+                reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
+                amount = doctors_pf if doctors_pf > 0 else reading_pf
+                pf_type = "Screening PF" if doctors_pf > 0 else "Reading PF"
+                amount_to_turnover = amount
 
-            if pf_perc > 0:
-                # print("PF PERC")
-                # Get item price for the package item where price list = si price list.                
-                rate = get_item_price(item.item_code,doc.selling_price_list)
-                amount = (pf_perc/100)*rate
-                amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
-                pf_type = "Reading PF"
-            
-            elif pf_fixed >0:
-                amount = pf_fixed
-                amount = (amount) * (1-(20/100)) * (1-addtl_disc)if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
-                pf_type = "Reading PF"
-
+            ### else: use regular computation
             else:
-                amount = 0
                 
+                pf_perc = frappe.db.get_value("Item", item.item_code, "custom_professional_fee_percentage")
+                pf_fixed = frappe.db.get_value("Item", item.item_code, "custom_professional_fee")
+    
+                if pf_perc > 0:
+                    # print("PF PERC")
+                    # Get item price for the package item where price list = si price list.                
+                    rate = get_item_price(item.item_code,doc.selling_price_list)
+                    amount = (pf_perc/100)*rate
+                    amount = (amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100))* (1-addtl_disc)
+                    pf_type = "Reading PF"
+                
+                elif pf_fixed >0:
+                    amount = pf_fixed
+                    amount = (amount) * (1-(20/100)) * (1-addtl_disc)if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
+                    pf_type = "Reading PF"
+
+                else:
+                    amount = 0
+                    
             amount_to_turnover = amount
+            
             if amount > 0:
                 total_pfs += amount
                 pf_row = {
@@ -427,7 +450,7 @@ def is_ape(item_code):
 
 def is_utz(item_code):
     is_utz = False
-    count_lab_test = frappe.db.sql("""SELECT COUNT(*) from `tabLab Test Template` where item = %s""",(item_code))
+    count_lab_test = frappe.db.sql("""SELECT COUNT(*) from `tabLab Test Template` where item = %s and department = 'Radiology'""",(item_code))
     if count_lab_test[0][0]>0:
         is_utz = True
     return is_utz
@@ -570,7 +593,7 @@ def get_items(ape_type, price_list):
     items = []
     #frappe.msgprint("get_item_details")
     item_details = frappe.db.sql("""select ape.item_code, itm.description, itm.item_name, itm.stock_uom, price.price_list_rate from `tabAPE Item` ape 
-                                 join `tabItem` itm on ape.item_code = itm.item_code join `tabItem Price` price on itm.name = price.item_code where 
+                                 join `tabItem` itm on ape.item_code = itm.item_code left join `tabItem Price` price on itm.name = price.item_code where 
                                  ape.parent = %s and price.price_list = %s""", 
                                  (ape_type,price_list), as_dict = True) 
     return item_details
