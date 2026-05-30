@@ -113,94 +113,6 @@ def validate_payments(doc):
         print(total,float(to_decimal(doc.custom_amount_due,2)) )
         frappe.throw("TOTAL PAYMENTS DOES NOT MATCH INVOICE AMOUNT DUE!")
 
-def pull_ape_pf(doc): #to recode
-    total_pfs = 0
-    less_pfs = 0
-
-    ### FOR SI ITEMS
-    for item in doc.items:
-        doctor = None
-        pf_type = "" #Select: Reading PF, Promo Consultation PF, MD Consultation PF, Incentive
-        amount = 0
-        amount_to_turnover = 0
-        if is_ape(item.item_code):
-            continue
-
-        else:
-            item_group = frappe.db.get_value("Item", item.item_code, "item_group")
-            if item_group == "Laboratory":
-                doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
-                reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
-                if doctors_pf > 0:
-                    doctor = item.custom_doctor
-                    amount = doctors_pf
-                    pf_type = "MD Consultation PF"
-                    amount_to_turnover = amount
-                else:
-                    doctor = item.custom_doctor
-                    amount = reading_pf
-                    pf_type = "Reading PF"
-                    amount_to_turnover = amount
-            else:
-                if "consultation" in str(item.item_code).lower():
-                    amount = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
-                    doctor = item.custom_doctor
-                    pf_type = "MD Consultation PF"
-                    amount_to_turnover = amount
-
-        if amount > 0:
-            total_pfs += amount
-            if doctor is not None:
-                pf_row = {
-                    "item_code":item.item_code,
-                    "amount": amount,
-                    "doctor": doctor,
-                    "pf_type": pf_type,
-                    "amount_to_turnover":amount_to_turnover
-                    } 
-                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives, doctor):
-                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
-            else:
-                pf_row = {
-                    "item_code":item.item_code,
-                    "amount": amount,
-                    "pf_type": pf_type,
-                    "amount_to_turnover":amount_to_turnover
-                    } 
-                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
-                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
-
-
-    ##FOR BUNDLE ITEMS
-    if doc.packed_items:
-        for item in doc.packed_items:
-            doctors_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_doctors_pf_fixed")
-            reading_pf = frappe.db.get_value("Item", item.item_code, "custom_ape_reading_pf_fixed")
-            
-            if doctors_pf >0:
-                amount = doctors_pf
-                pf_type = "MD Consultation PF"
-            
-            elif reading_pf > 0:
-                amount = reading_pf
-                pf_type = "Reading PF"
-
-            else:
-                amount = 0
-                
-            amount_to_turnover = amount
-            if amount > 0:
-                total_pfs += amount
-                pf_row = {
-                    "item_code":item.item_code,
-                    "amount": amount,
-                    "pf_type": pf_type,
-                    "amount_to_turnover":amount
-                    }
-                if not check_in_pf_items(pf_row,doc.custom_pf_and_incentives):
-                    pf_row = doc.append("custom_pf_and_incentives",pf_row)
-                    frappe.msgprint("Please enter doctor for PF/Incentive row"+str(pf_row.idx)+" | "+pf_row.item_code)
-
 
 def pull_item_pf_incentives(doc):
     total_pfs = 0
@@ -268,7 +180,7 @@ def pull_item_pf_incentives(doc):
                     if "consultation" in str(item.item_code).lower():
                         doctor = item.custom_doctor
                         pf_type = "MD Consultation PF"
-                        amount = (item.amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
+                        amount = (item.amount/1.12) * (1-(20/100)) * (1-addtl_disc) if ("SC/PWD" in doc.custom_source) else item.amount * (1-((doc.additional_discount_percentage)/100)) * (1-addtl_disc)
                         amount_to_turnover = amount
 
         if amount > 0 and not utz:
