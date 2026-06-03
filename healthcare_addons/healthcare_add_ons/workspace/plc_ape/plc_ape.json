@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"neuDcSNDEz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PREMIER LAB - APE</span>\",\"col\":12}},{\"id\":\"lArI3uEWF1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"D5UnH75wx9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"APE Type\",\"col\":3}},{\"id\":\"YbGIuucDFr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Transactions</span>\",\"col\":12}},{\"id\":\"A5UTg85QEe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"Ycky86S_B1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test\",\"col\":3}},{\"id\":\"x07uzDuyWA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"q3FWtj1iGz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"APE Daily Sales Report\",\"col\":3}}]",
+ "content": "[{\"id\":\"neuDcSNDEz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PREMIER LAB - APE</span>\",\"col\":12}},{\"id\":\"lArI3uEWF1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"D5UnH75wx9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"APE Type\",\"col\":3}},{\"id\":\"YbGIuucDFr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Transactions</span>\",\"col\":12}},{\"id\":\"A5UTg85QEe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"Ycky86S_B1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test\",\"col\":3}},{\"id\":\"x07uzDuyWA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"pvT1nnIF18\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
  "creation": "2026-05-19 20:38:16.061402",
  "custom_blocks": [],
  "docstatus": 0,
@@ -11,8 +11,27 @@
  "idx": 0,
  "is_hidden": 0,
  "label": "PLC APE",
- "links": [],
- "modified": "2026-06-03 09:08:55.171761",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "APE Daily Sales Report",
+   "link_count": 0,
+   "link_to": "APE Daily Sales Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-06-03 09:34:01.355707",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PLC APE",
@@ -34,13 +53,6 @@
  ],
  "sequence_id": 5.0,
  "shortcuts": [
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "APE Daily Sales Report",
-   "link_to": "APE Daily Sales Report",
-   "type": "Report"
-  },
   {
    "color": "Grey",
    "doc_view": "List",
