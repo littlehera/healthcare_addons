@@ -1,4 +1,4 @@
-# Copyright (c) 2023, littlehera and contributors
+# Copyright (c) 2026, littlehera and contributors
 # For license information, please see license.txt
 
 import frappe
@@ -117,8 +117,8 @@ def get_all_si(from_date, to_date, filters):
 		query += " AND si.custom_source = {}".format("'"+custom_source+"'")
 	if payment_mode != "":
 		query += " AND pmt.payment_mode ={}".format("'"+payment_mode+"'")
-
-	query += " AND (si.custom_ape_type is NULL OR si.custom_ape_type = '')"
+	
+	query += " AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')"
 	
 	query += " order by si.name asc, posting_date asc"
 
@@ -153,7 +153,7 @@ def get_all_payments(from_date, to_date, filters):
 	if payment_mode != "":
 		query += " AND pmt.payment_mode ={}".format("'"+payment_mode+"'")
 	
-	query += " AND (si.custom_ape_type is NULL OR si.custom_ape_type = '')"
+	query += " AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')"
 
 	rows = frappe.db.sql(query, as_dict = True)
 	
@@ -206,25 +206,25 @@ def get_totals_only(from_date, to_date, report_type, filters):
 		data = frappe.db.sql("""SELECT si.custom_source, sum(si.total) as total, sum(si.discount_amount) as discount_amount, sum(si.net_total) 
 			   					as net_total from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
 					  			si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s 
-					   			AND (si.custom_ape_type is NULL OR si.custom_ape_type = '')
-					   			and name in (SELECT parent from `tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
+					   			AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and name in (SELECT parent from 
+					   			`tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
 					   			group by si.custom_source""",
 					  			(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 	elif report_type == "Summary based on Referred By":
 		data = frappe.db.sql("""SELECT si.custom_practitioner_name, sum(si.total) as total, sum(si.discount_amount) as discount_amount, sum(si.net_total) 
 								as net_total from `tabSales Invoice` si where si.posting_date >=%s and si.posting_date<=%s and 
 					  			si.docstatus = 1 and si.ref_practitioner like %s and si.custom_source like %s 
-					   			AND (si.custom_ape_type is NULL OR si.custom_ape_type = '')
-					   			and name in (SELECT parent from `tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
+					   			AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and name in 
+					   			(SELECT parent from `tabInvoice Payment Table` pmt where pmt.payment_mode like %s)
 					   			group by si.custom_practitioner_name""",
 								(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 
 	else:
 		data = frappe.db.sql("""SELECT pmt.payment_mode as payment_mode, sum(pmt.amount) as amount from `tabInvoice Payment Table` pmt join `tabSales Invoice` si 
-					   			on si.name = pmt.parent	where si.posting_date >=%s and si.posting_date <=%s and si.docstatus = 1 
-					   			AND (si.custom_ape_type is NULL OR si.custom_ape_type = '')
-					   			and si.ref_practitioner like %s and si.custom_source like %s and pmt.payment_mode like %s
-					   			group by pmt.payment_mode""",
+					   			on si.name = pmt.parent	where si.posting_date >=%s and si.posting_date <=%s and si.docstatus = 1 and 
+					   			si.ref_practitioner like %s and si.custom_source like %s 
+					   			AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')
+					   			and pmt.payment_mode like %s group by pmt.payment_mode""",
 								(from_date,to_date,'%'+ref_practitioner+'%','%'+custom_source+'%','%'+payment_mode+'%'), as_dict = True)
 
 	return data
