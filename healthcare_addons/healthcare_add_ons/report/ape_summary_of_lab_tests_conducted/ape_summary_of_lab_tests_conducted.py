@@ -94,7 +94,7 @@ def get_si_item_total(from_date, to_date, item_code, si_source = None):
 
 	qty = frappe.db.sql("""SELECT SUM(itm.qty) from `tabSales Invoice Item` itm join `tabSales Invoice` si on
 					 		si.name = itm.parent where itm.item_code = %s and si.docstatus = 1 and si.posting_date >=%s
-					 		and si.posting_date<=%s and si.custom_source like %s AND (si.custom_ape_type is NULL or si.custom_ape_type = '') """,
+					 		and si.posting_date<=%s and si.custom_source like %sAND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')""",
 							(item_code, from_date, to_date, '%'+source+'%'))
 	if len(qty)<1:
 		return 0
@@ -108,7 +108,7 @@ def get_bundle_item_total(from_date, to_date, item_code, si_source = None):
 	
 	qty = frappe.db.sql("""SELECT SUM(itm.qty) from `tabPacked Item` itm join `tabSales Invoice` si on
 					 		si.name = itm.parent where itm.item_code = %s and si.docstatus = 1 and si.posting_date >=%s
-					 		and si.posting_date<=%s and si.custom_source like %s AND (si.custom_ape_type is NULL or si.custom_ape_type = '')""",
+					 		and si.posting_date<=%s and si.custom_source like %s AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')""",
 							(item_code, from_date, to_date, '%'+source+'%'))
 	if len(qty)<1:
 		return 0
