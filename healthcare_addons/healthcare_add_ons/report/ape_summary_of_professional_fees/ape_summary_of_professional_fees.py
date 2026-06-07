@@ -59,15 +59,16 @@ def get_data(from_date, to_date, report_type, ref_practitioner, item_code):
 	elif "Reading" in report_type:
 		pf_type = "Reading PF"
 		order_by = "doctor"
+	elif "Screening" in report_type:
+		pf_type = "Screening PF"
+		order_by = "doctor"
 	else:
 		pf_type= "Reading PF"
 		order_by = "item_code"
 	return frappe.db.sql("""SELECT parent, item_code, amount, doctor, amount_to_turnover from `tabPF and Incentive Item` 
 					   			where docstatus = 1 and pf_type like %s and doctor like %s and item_code like %s and  
 					  			parent in (select name from `tabSales Invoice`
-					  			WHERE (custom_ape_type is NULL or custom_ape_type = '')
-					  			and posting_date >=%s and posting_date <=%s
-					  			) order by %s""",
+					  			where posting_date >=%s and posting_date <=%s AND (custom_ape_type is not NULL AND custom_ape_type <>''))  order by %s""",
 								('%'+pf_type+'%','%'+ref_practitioner+'%', '%'+item_code+'%',from_date, to_date, order_by), as_dict = True)
 
 def get_practitioner_name(ref_practitioner):
