@@ -89,7 +89,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, external_refer
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.ref_practitioner, si.patient_name, si.total, si.discount_amount, si.net_total, 
 								si.total_commission, pf.amount as total_commission from `tabSales Invoice` si join `tabPF and Incentive Item` pf on si.name = pf.parent
 					   			where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s
-								AND (si.custom_ape_type is NULL or si.custom_ape_type = '')
+								AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')
 					   			and pf.item_code = "INCENTIVE" and si.total_commission > 0
 					   			order by si.ref_practitioner asc, sales_invoice asc, si.posting_date asc, si.patient_name asc""",
 								(from_date, to_date), as_dict = True)
@@ -97,7 +97,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, external_refer
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.ref_practitioner, si.patient_name, si.total, si.discount_amount, si.net_total, 
 									si.total_commission, pf.amount as total_commission from `tabSales Invoice` si join `tabPF and Incentive Item` pf on si.name = pf.parent
 									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.ref_practitioner = %s
-									AND (si.custom_ape_type is NULL or si.custom_ape_type = '')
+									AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')
 									and pf.item_code = "INCENTIVE" and si.total_commission > 0
 									order by si.ref_practitioner asc, sales_invoice asc, si.posting_date asc, si.patient_name asc""",
 									(from_date, to_date, referred_by), as_dict = True)
@@ -121,7 +121,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, external_refer
 									si.net_total, si.total_commission, (si.net_total) as net_sales, si.amount_eligible_for_commission, itm.item_code,
 									itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name 
 									where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s
-						 			AND (si.custom_ape_type is NULL or si.custom_ape_type = '')
+						 			AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')
 									and (itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package') or (itm.item_code ="REFERRAL"))
 									order by si.custom_external_referrer asc, si.posting_date asc, si.patient_name asc, itm.item_code asc, si.total asc,
 									si.amount_eligible_for_commission asc""",
@@ -129,9 +129,9 @@ def get_data(from_date, to_date, report_type, referred_by = None, external_refer
 			else:
 				data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, itm.external_referrer, si.patient_name, si.total, si.discount_amount, 
 										si.net_total, si.total_commission, (si.net_total) as net_sales, si.amount_eligible_for_commission, itm.item_code,
-										itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name 
+										itm.amount_to_turnover from `tabSales Invoice` si join `tabPF and Incentive Item` itm on itm.parent = si.name
 										where si.docstatus = 1 and si.posting_date >=%s and si.posting_date <=%s and si.custom_external_referrer = %s
-						 				AND (si.custom_ape_type is NULL or si.custom_ape_type = '')
+						 				AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'')
 										and (itm.item_code in (select new_item_code from `tabProduct Bundle` where custom_type = 'Package') or (itm.item_code ="REFERRAL"))
 										order by si.custom_external_referrer asc, si.posting_date asc, si.patient_name asc, itm.item_code asc, si.total asc,
 										si.amount_eligible_for_commission asc""",
@@ -145,7 +145,7 @@ def get_data(from_date, to_date, report_type, referred_by = None, external_refer
 			data = frappe.db.sql("""SELECT name as sales_invoice, posting_date, custom_external_referrer, patient_name, total, discount_amount, net_total, 
 									total_commission, (net_total - total_commission) as net_sales, amount_eligible_for_commission
 									from `tabSales Invoice` where docstatus = 1 and posting_date >=%s and posting_date <=%s and custom_external_referrer like %s
-									AND (custom_ape_type is NULL or custom_ape_type = '')
+									AND (custom_ape_type is not NULL AND custom_ape_type <>'')
 									and name in (SELECT parent from `tabSales Invoice Item` where item_code like%s) order by custom_external_referrer asc,
 									sales_invoice asc""",
 									(from_date, to_date, '%'+external_referrer+'%', package), as_dict = True)
