@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"neuDcSNDEz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PREMIER LAB - APE</span>\",\"col\":12}},{\"id\":\"lArI3uEWF1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"D5UnH75wx9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"APE Type\",\"col\":3}},{\"id\":\"YbGIuucDFr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Transactions</span>\",\"col\":12}},{\"id\":\"A5UTg85QEe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"Ycky86S_B1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test\",\"col\":3}},{\"id\":\"x07uzDuyWA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"pvT1nnIF18\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Reports\",\"col\":4}}]",
+ "content": "[{\"id\":\"neuDcSNDEz\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h2\\\">PREMIER LAB - APE</span>\",\"col\":12}},{\"id\":\"lArI3uEWF1\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Masters</span>\",\"col\":12}},{\"id\":\"D5UnH75wx9\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"APE Type\",\"col\":3}},{\"id\":\"YbGIuucDFr\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Transactions</span>\",\"col\":12}},{\"id\":\"A5UTg85QEe\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Sales Invoice\",\"col\":3}},{\"id\":\"Ycky86S_B1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Lab Test\",\"col\":3}},{\"id\":\"x07uzDuyWA\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Reports</span>\",\"col\":12}},{\"id\":\"pvT1nnIF18\",\"type\":\"card\",\"data\":{\"card_name\":\"Sales Reports\",\"col\":4}},{\"id\":\"aMaquJvOY7\",\"type\":\"card\",\"data\":{\"card_name\":\"Other Summary Reports\",\"col\":4}}]",
  "creation": "2026-05-19 20:38:16.061402",
  "custom_blocks": [],
  "docstatus": 0,
@@ -39,9 +39,28 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Other Summary Reports",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "APE Summary of HMO Transactions",
+   "link_count": 0,
+   "link_to": "APE Summary of HMO Transactions",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-06-04 09:19:46.722004",
+ "modified": "2026-06-07 15:24:51.579988",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PLC APE",

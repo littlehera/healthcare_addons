@@ -1,5 +1,8 @@
-# Copyright (c) 2023, littlehera and contributors
+# Copyright (c) 2026, littlehera and contributors
 # For license information, please see license.txt
+
+# import frappe
+
 
 import frappe
 
@@ -62,26 +65,26 @@ def get_data(from_date, to_date, report_type, hmo):
 		if hmo == "":
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 									from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-									(si.custom_ape_type is NULL or si.custom_ape_type = '') and
+									(si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and
 									si.docstatus = 1 and si.custom_hmo like %s""",
 									(from_date, to_date, '%'+hmo+'%'),as_dict = True)
 		else:
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 									from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-									(si.custom_ape_type is NULL or si.custom_ape_type = '') and
+									(si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and
 									si.docstatus = 1 and si.custom_hmo = %s""",
 									(from_date, to_date, hmo),as_dict = True)
 	else:
 		if hmo == "":
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 					   			from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-								(si.custom_ape_type is NULL or si.custom_ape_type = '') and
+								(si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and
 					   			si.docstatus = 1 and si.custom_hmo like %s""",
 								(from_date, to_date, '%'+hmo+'%'),as_dict = True)
 		else:
 			data = frappe.db.sql("""SELECT si.name as sales_invoice, si.posting_date, si.custom_hmo as hmo, si.patient, si.patient_name
 					   			from `tabSales Invoice` si where si.posting_date >= %s and si.posting_date<=%s and
-								(si.custom_ape_type is NULL or si.custom_ape_type = '') and
+								(si.custom_ape_type is not NULL AND si.custom_ape_type <>'') and
 					   			si.docstatus = 1 and si.custom_hmo = %s""",
 								(from_date, to_date, hmo),as_dict = True)
 	
