@@ -19,7 +19,7 @@ def execute(filters=None):
 
 	data = frappe.db.sql("""SELECT si.custom_employee, si.patient, si.patient_name,  pmt.amount as amount from `tabSales Invoice` si join `tabInvoice Payment Table` pmt
 					  		on pmt.parent = si.name where si.posting_date >= %s and si.posting_date<=%s and si.docstatus = 1 and
-					  		si.custom_employee like %s AND (si.custom_ape_type is NULL or si.custom_ape_type = '') 
+					  		si.custom_employee like %s AND (si.custom_ape_type is not NULL AND si.custom_ape_type <>'') 
 					  		and pmt.payment_mode = 'Employee Benefit' order by si.custom_employee""",
 							(from_date, to_date, '%'+employee+'%'), as_dict=True)
 	

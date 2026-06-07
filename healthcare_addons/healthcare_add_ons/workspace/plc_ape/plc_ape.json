@@ -44,7 +44,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Other Summary Reports",
-   "link_count": 3,
+   "link_count": 5,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -78,9 +78,29 @@
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "APE Summary of Lab Tests Conducted",
+   "link_count": 0,
+   "link_to": "APE Summary of Lab Tests Conducted",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "APE Summary of Labs per Employee",
+   "link_count": 0,
+   "link_to": "APE Summary of Labs per Employee",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-06-07 19:51:04.000948",
+ "modified": "2026-06-07 20:14:23.264186",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PLC APE",
