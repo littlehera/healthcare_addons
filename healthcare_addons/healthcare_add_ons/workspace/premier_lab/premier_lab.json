@@ -12,7 +12,7 @@
  "is_hidden": 0,
  "label": "Premier Lab",
  "links": [],
- "modified": "2026-06-07 20:02:12.019741",
+ "modified": "2026-06-11 13:49:33.581154",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "Premier Lab",
@@ -37,6 +37,14 @@
  ],
  "sequence_id": 4.0,
  "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Sales Invoices",
+   "link_to": "Sales Invoice",
+   "stats_filter": "[[\"Sales Invoice\",\"custom_is_ape\",\"=\",0,false]]",
+   "type": "DocType"
+  },
   {
    "color": "Grey",
    "doc_view": "List",
@@ -107,13 +115,6 @@
    "doc_view": "List",
    "label": "Item",
    "link_to": "Item",
-   "type": "DocType"
-  },
-  {
-   "color": "Grey",
-   "doc_view": "List",
-   "label": "Sales Invoices",
-   "link_to": "Sales Invoice",
    "type": "DocType"
   },
   {

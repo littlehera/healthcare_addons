@@ -100,7 +100,7 @@
    "type": "Link"
   }
  ],
- "modified": "2026-06-07 20:14:23.264186",
+ "modified": "2026-06-11 13:49:49.017127",
  "modified_by": "Administrator",
  "module": "Healthcare Add-ons",
  "name": "PLC APE",
@@ -133,17 +133,17 @@
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "APE Type",
-   "link_to": "APE Type",
-   "stats_filter": "[]",
+   "label": "Sales Invoice",
+   "link_to": "Sales Invoice",
+   "stats_filter": "[[\"Sales Invoice\",\"custom_is_ape\",\"=\",1,false]]",
    "type": "DocType"
   },
   {
    "color": "Grey",
    "doc_view": "List",
-   "label": "Sales Invoice",
-   "link_to": "Sales Invoice",
-   "stats_filter": "[[\"Sales Invoice\",\"custom_ape_type\",\"!=\",null,false]]",
+   "label": "APE Type",
+   "link_to": "APE Type",
+   "stats_filter": "[]",
    "type": "DocType"
   }
  ],
